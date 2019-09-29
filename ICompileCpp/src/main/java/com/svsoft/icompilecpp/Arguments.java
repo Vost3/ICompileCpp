@@ -1,93 +1,187 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.svsoft.icompilecpp;
 
 /**
- *
+ * Class of argument for manage argument send like bash
+ * ex : 
  * @author Steve Vogel
+ * @version 1.0
  */
 public class Arguments {
+    
+    /**
+     * ip of power system
+     */
     private String ip = null;
+    /**
+     * login in 10 characters ( see ibmi limit )
+     */
     private String user = null;
+    /**
+     * password 
+     */
     private String password = null;
+    /**
+     * library of compile
+     */
     private String library = "*CURLIB";       
-    private String tgtrls = "*PRV";         // Previous by default  
-    private String name = null;          
-    private String filePath = null;         // relative local file path against workspace directory
-    private String remoteDirectory = null;  // remote path    
-    private boolean dbgview = false;
+    /**
+     * target release ( see command CRTCPPMOD ) 
+     */
+    private String tgtrls = "*PRV"; 
+    /**
+     * name of module or program ( see command CRTCPPMOD )
+     * previous by default
+     */
+    private String name = null; 
+    /**
+     * path of cpp in relative of workspace
+     */
+    private String filePath = null; 
+    /**
+     * path or remote directory workspace
+     */
+    private String remoteDirectory = null;
+    /**
+     * debug view ( see command CRTCPPMOD DBGVIEW )
+     */
+    private String dbgview = "*NONE";
 
-    // Constructor
+
+    /**
+     *
+     * @param args
+     */
     public Arguments(String[] args)
     {
         getAllArguments(args);   
         check();
     }
     
+    /**
+     *
+     * @return 
+     */
     public String getIp() {
         return ip;
     }
-
+    
+    /**
+     *
+     * @param ip
+     */
     public void setIp(String ip) {
         this.ip = ip;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUser() {
         return user;
     }
 
+    /**
+     *
+     * @param user
+     */
     public void setUser(String user) {
         this.user = user;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     *
+     * @param password
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getLibrary() {
         return library;
     }
 
+    /**
+     *
+     * @param library
+     */
     public void setLibrary(String library) {
         this.library = library;
     }
         
+    /**
+     *
+     * @param objName
+     */
     public void setName(String objName){
         this.name = objName;
     }
     
+    /**
+     *
+     * @return
+     */
     public String getName() {
         return name;
     }  
     
+    /**
+     *
+     * @return
+     */
     public String getTGTRLS() {
         return tgtrls;
     }  
     
+    /**
+     *
+     * @param path
+     */
     public void setFilePath(String path){
         this.filePath = path;
     }
     
+    /**
+     *
+     * @return
+     */
     public String getFilePath() {
         return filePath;
     }
     
+    /**
+     *
+     * @param path
+     */
     public void setRemoteDirectory(String path){
         this.remoteDirectory = path;
     }
     
+    /**
+     *
+     * @return
+     */
     public String getRemoteDirectory() {
         return remoteDirectory;
     }   
     
-    public boolean getDebugView(){
+    /**
+     *
+     * @return
+     */
+    public String getDebugView(){
         return dbgview;
     }
     /*
@@ -109,10 +203,12 @@ public class Arguments {
                 argTreated = false;
                 String currentArgs = args[i];
                                 
+                // Library of compile
                 if( currentArgs.equals("-l") || currentArgs.equals("-library") || currentArgs.equals("-lib")){
                     library = args[i+1];
                     argTreated = true;
                 }else 
+                    // File paht relative of workspace
                     if( currentArgs.equalsIgnoreCase("-file") || currentArgs.equals("-f") ){
                     filePath = args[i+1];                    
                     argTreated = true;                    
@@ -125,16 +221,24 @@ public class Arguments {
                         remoteDirectory += "/";
                     
                     argTreated = true;                
-                }else if( currentArgs.equals("-name") ){
+                }else
+                    // Name of program of module
+                    if( currentArgs.equals("-name") ){
                     name = args[i+1];
                     argTreated = true;  
-                }else if( currentArgs.equalsIgnoreCase("-dbgview") ){
-                    dbgview = true;
+                }else
+                    // Debug view 
+                    if( currentArgs.equalsIgnoreCase("-dbgview") ){
+                    dbgview = args[i+1];
                     argTreated = true;  
-                }else if( currentArgs.equalsIgnoreCase("-ip") ){
+                }else
+                    // Ip of power system
+                    if( currentArgs.equalsIgnoreCase("-ip") ){
                     ip = args[i+1];
                     argTreated = true; 
-                }else if( currentArgs.equalsIgnoreCase("-tgtrls") ){
+                }else 
+                    // Target release
+                    if( currentArgs.equalsIgnoreCase("-tgtrls") ){
                     tgtrls = args[i+1];
                     if( tgtrls.startsWith("V") == false ){
                         System.err.println("ERROR \t: bad format for 'tgtrls' argument");
