@@ -1,5 +1,9 @@
 package com.svsoft.icompilecpp;
 
+import com.svsoft.icompilecpp.exception.ArgumentNotValid;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Class of argument for manage argument send like bash
  * ex : 
@@ -205,17 +209,17 @@ public class Arguments {
                                 
                 // Library of compile
                 if( currentArgs.equals("-l") || currentArgs.equals("-library") || currentArgs.equals("-lib")){
-                    library = args[i+1];
+                    library = getNextArg(args, i);
                     argTreated = true;
                 }else 
                     // File paht relative of workspace
                     if( currentArgs.equalsIgnoreCase("-file") || currentArgs.equals("-f") ){
-                    filePath = args[i+1];                    
+                    filePath = getNextArg(args, i);                    
                     argTreated = true;                    
                 }else 
                     // Workspace directory on Server
                     if( currentArgs.equalsIgnoreCase("-dir") ){   
-                    remoteDirectory = args[i+1];
+                    remoteDirectory = getNextArg(args, i);
                     
                     if( remoteDirectory.endsWith("/") == false )
                         remoteDirectory += "/";
@@ -224,22 +228,22 @@ public class Arguments {
                 }else
                     // Name of program of module
                     if( currentArgs.equals("-name") ){
-                    name = args[i+1];
+                    name = getNextArg(args, i);
                     argTreated = true;  
                 }else
                     // Debug view 
                     if( currentArgs.equalsIgnoreCase("-dbgview") ){
-                    dbgview = args[i+1];
+                    dbgview = getNextArg(args, i);
                     argTreated = true;  
                 }else
                     // Ip of power system
                     if( currentArgs.equalsIgnoreCase("-ip") ){
-                    ip = args[i+1];
+                    ip = getNextArg(args, i);
                     argTreated = true; 
                 }else 
                     // Target release
                     if( currentArgs.equalsIgnoreCase("-tgtrls") ){
-                    tgtrls = args[i+1];
+                    tgtrls = getNextArg(args, i);
                     if( tgtrls.startsWith("V") == false ){
                         System.err.println("ERROR \t: bad format for 'tgtrls' argument");
                         System.exit(1);
@@ -249,12 +253,12 @@ public class Arguments {
                 }else
                     // User login
                     if( currentArgs.equals("-user") || currentArgs.equals("-usr") ){
-                    user = args[i+1];
+                    user = getNextArg(args, i);
                     argTreated = true;
                 }else 
                     // Password for Server login
                     if( currentArgs.equals("-password") || currentArgs.equals("-pwd") ){
-                    password = args[i+1];
+                    password = getNextArg(args, i);
                     argTreated = true;                     
                 }else
                     // Help
@@ -263,10 +267,12 @@ public class Arguments {
                     System.exit(0);
                 }
                 
+                // Bound security
                 if( i+1 > argsLen-1){
                     break;
                 }
                 
+                // If current argument is just a flag
                 if( args[i+1].startsWith("-") )
                     i = i+1;
                 else
@@ -279,12 +285,35 @@ public class Arguments {
         } catch (NumberFormatException ex) {           
             System.err.println(ex.toString());
             System.exit(1);
+        } catch (ArgumentNotValid ex) {
+            System.err.println(ex.toString());
+            System.exit(1);            
         }
         
         // Replace or init values        
         //initVars();        
         
     }   
+    
+    /**
+     * get the new arguments and check validity
+     * @param args
+     * @param index
+     * @return next argument if not start by "-"
+     * @throws ArgumentNotValid 
+     */
+    private String getNextArg(String[] args, int index) throws ArgumentNotValid
+    {
+        if( (index+1) >= args.length ) 
+            throw new ArrayIndexOutOfBoundsException();
+        
+        String currentArg = args[index+1];
+        if( currentArg.startsWith("-") )
+            throw new ArgumentNotValid("ERROR \t: "+args[index] + " not valid");
+        
+        return currentArg;
+    }
+    
     
     private void check(){
         boolean error = false;

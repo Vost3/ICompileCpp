@@ -129,10 +129,8 @@ public class Main {
         if (modOptions != null) {
             cmdS += " " + modOptions;
         }
-
-        if (parms.getDebugView()) {
-            cmdS += " DBGVIEW(*ALL)";
-        }
+        
+        cmdS += " DBGVIEW("+parms.getDebugView()+")";        
 
         System.out.println(Date.nowFormatted2() + " : INFO\t: compile module " + parms.getLibrary() + "/" + name + " ...");
         boolean compiled = srv.runCMD(cmdS);
