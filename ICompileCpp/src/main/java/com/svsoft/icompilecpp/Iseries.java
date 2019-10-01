@@ -74,15 +74,18 @@ public class Iseries {
                 if( ignoreError )
                     return true;
                 
+                System.out.println("failed. \r\n");
+                
                 int joblogCurrentLenght = cmd.getServerJob().getJobLog().getLength();
                 QueuedMessage[] qMsg = cmd.getServerJob().getJobLog().getMessages(joblogPreviousLenght, joblogCurrentLenght);
                 
+                int errorNumber = 1;
                 int i = 0;                
                 while (i < qMsg.length) 
                 {  
                     // Ignore CPF5C62=Client request - run command &2.
                     // Ingore CPF5C61=Client request - run program &2/&1.
-                    if( qMsg[i].getID().equals("CPF5C62") || qMsg[i].getID().equals("CPF5C61")){
+                    if( qMsg[i].getID().equals("CPF5C62") || qMsg[i].getID().equals("CPF5C61") || qMsg[i].getID().equals("CZS0613") || qMsg[i].getID().equals("CPF3C50") ){
                         i++;
                         continue;
                     }
@@ -94,13 +97,19 @@ public class Iseries {
                         helpText = helpText.substring(2, helpText.length());
                     }
                     
-                    if( qMsg[i].getID().trim().equals("") == false )
-                        System.err.println(qMsg[i].getID()+" - " +qMsg[i].getText());                             
+                    // Id + text
+                    if( qMsg[i].getID().trim().equals("") == false ){
+                        System.err.println("Error n°" + errorNumber + " : " + qMsg[i].getID()+" - " +qMsg[i].getText());
+                        errorNumber++;
+                    }
                     
-                    System.out.println(helpText.replace("&N", "\r\n"));                        
+                    // Help text
+                    System.err.println(formatHelpText(helpText) + "\r\n");                        
                     
                     i++;
                 }      
+                
+                
                 
                 return false;
             }            
@@ -111,6 +120,36 @@ public class Iseries {
         }        
         
         return true;
+    }
+    
+    /**
+     * Formating help text from ibmi
+     * @param helpText
+     * @return 
+     */
+    String formatHelpText(String helpText)
+    {     
+        String[] helpTextArr = helpText.split("&N");
+        helpText = "";
+        
+        for (int i = 0; i < helpTextArr.length ; i++) {
+            // Remove "Cause . . . . . :"
+            if( helpTextArr[i].contains("Cause . . . . . :")){
+                String fixedLine = helpTextArr[i].replace("Cause . . . . . :", "").trim();
+                helpText += fixedLine + "";
+                continue;
+            }
+            
+            // Remove "Recovery  . . . :"  
+/*            if( helpTextArr[i].contains("Recovery  . . . :")){
+                String fixedLine = helpTextArr[i].replace("Recovery  . . . :", "").trim();
+                helpText += fixedLine + "";
+                continue;
+            }
+*/
+        }
+        
+        return helpText;
     }
     
     void disconnect(){

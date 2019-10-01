@@ -132,10 +132,10 @@ public class Main {
         
         cmdS += " DBGVIEW("+parms.getDebugView()+")";        
 
-        System.out.println(Date.nowFormatted2() + " : INFO\t: compile module " + parms.getLibrary() + "/" + name + " ...");
+        System.out.print(Date.nowFormatted2() + " : INFO\t: module " + parms.getLibrary() + "/" + name + " ");
         boolean compiled = srv.runCMD(cmdS);
         if (compiled) {
-            System.out.println(Date.nowFormatted2() + " : SUCCESS\t: module " + parms.getLibrary() + "/" + name + " compiled successfully.");
+            System.out.println("compiled successfully.");
         }
 
         return compiled;
@@ -157,14 +157,14 @@ public class Main {
         }
         cmdS = String.format(cmdS, modulesFormated);
 
-        System.out.println(Date.nowFormatted2() + " : INFO\t: compile program " + parms.getLibrary() + "/" + name + " ...");
+        System.out.print(Date.nowFormatted2() + " : INFO\t: program " + parms.getLibrary() + "/" + name + " ");
         if (pgmOptions != null) {
             cmdS += " " + pgmOptions;
         }
  
         boolean compiled = srv.runCMD(cmdS);
         if (compiled) {
-            System.out.println(Date.nowFormatted2() + " : SUCCESS\t: program " + parms.getLibrary() + "/" + name + " compiled successfully.");
+            System.out.println("compiled successfully.");
         }
     }
 }

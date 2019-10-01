@@ -44,7 +44,7 @@ public class Arguments {
     /**
      * path or remote directory workspace
      */
-    private String remoteDirectory = null;
+    private String remoteWorkspace = null;
     /**
      * debug view ( see command CRTCPPMOD DBGVIEW )
      */
@@ -170,7 +170,7 @@ public class Arguments {
      * @param path
      */
     public void setRemoteDirectory(String path){
-        this.remoteDirectory = path;
+        this.remoteWorkspace = path;
     }
     
     /**
@@ -178,12 +178,12 @@ public class Arguments {
      * @return
      */
     public String getRemoteDirectory() {
-        return remoteDirectory;
+        return remoteWorkspace;
     }   
     
     /**
-     *
-     * @return
+     * get debug view level wanted
+     * @return debugview level
      */
     public String getDebugView(){
         return dbgview;
@@ -201,8 +201,8 @@ public class Arguments {
             System.exit(0);
         }
         
-        try {                                           
-            int i = 0;
+        int i = 0;
+        try {                                                       
             while( i < argsLen ){
                 argTreated = false;
                 String currentArgs = args[i];
@@ -218,11 +218,11 @@ public class Arguments {
                     argTreated = true;                    
                 }else 
                     // Workspace directory on Server
-                    if( currentArgs.equalsIgnoreCase("-dir") ){   
-                    remoteDirectory = getNextArg(args, i);
+                    if( currentArgs.equalsIgnoreCase("-rdir") ){   
+                    remoteWorkspace = getNextArg(args, i);
                     
-                    if( remoteDirectory.endsWith("/") == false )
-                        remoteDirectory += "/";
+                    if( remoteWorkspace.endsWith("/") == false )
+                        remoteWorkspace += "/";
                     
                     argTreated = true;                
                 }else
@@ -280,7 +280,7 @@ public class Arguments {
             }
                                     
         } catch (java.lang.ArrayIndexOutOfBoundsException ex ){
-            System.err.println("ERROR \t: please check the documentation");
+            System.err.println("ERROR \t: " + ex.getMessage() + " ( please check the documentation )");            
             System.exit(1);
         } catch (NumberFormatException ex) {           
             System.err.println(ex.toString());
@@ -305,7 +305,7 @@ public class Arguments {
     private String getNextArg(String[] args, int index) throws ArgumentNotValid
     {
         if( (index+1) >= args.length ) 
-            throw new ArrayIndexOutOfBoundsException();
+            throw new ArrayIndexOutOfBoundsException(args[index]+" parameter badly defined");
         
         String currentArg = args[index+1];
         if( currentArg.startsWith("-") )
@@ -322,7 +322,7 @@ public class Arguments {
             error = true;
         }
         
-        if( remoteDirectory == null ){
+        if( remoteWorkspace == null ){
             System.err.println("ERROR \t: -rmtd argument is missing");
             error = true;
         }
