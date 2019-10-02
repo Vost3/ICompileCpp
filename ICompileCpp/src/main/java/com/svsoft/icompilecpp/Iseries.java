@@ -6,11 +6,13 @@
 package com.svsoft.icompilecpp;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400FTP;
 import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.CommandCall;
 import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.ObjectDoesNotExistException;
 import com.ibm.as400.access.QueuedMessage;
+import com.svsoft.icompilecpp.exception.SeeListingError;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 
@@ -24,6 +26,7 @@ public class Iseries {
     private String ip = null;
     private String user = null;
     private String password = null;
+    private AS400FTP ftp = null;
     
     private int joblogPreviousLenght;
     // Initialized with Arguments Class
@@ -55,11 +58,25 @@ public class Iseries {
         return true;
     }
     
+    
     public boolean runCMD(String cmdS){
-            return runCMD(cmdS, false);
+        if( cmd == null )
+            getCmd();
+        
+        try{
+            // Save current lenght of joblog
+            joblogPreviousLenght = cmd.getServerJob().getJobLog().getLength();            
+            // exec command
+            return cmd.run(cmdS);
+            
+        } catch (AS400SecurityException | IOException | InterruptedException | PropertyVetoException | ErrorCompletingRequestException ex) {
+            //Logger.getLogger(IbmICPP.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println(Date.nowFormatted2() + " : ERROR \t: "+ex.getMessage());
+            return false;
+        }          
     }
     // Send command and resolve joblog if error
-    public boolean runCMD(String cmdS, boolean ignoreError)
+    public boolean runCompile(String cmdS)
     {
         if( cmd == null )
             getCmd();
@@ -69,25 +86,28 @@ public class Iseries {
             joblogPreviousLenght = cmd.getServerJob().getJobLog().getLength();            
             // exec command
             if( cmd.run(cmdS) == false )
-            {                           
-                // Joblog or error not wanted
-                if( ignoreError )
-                    return true;
+            {                                                           
+                System.out.println("failed.");                
                 
-                System.out.println("failed. \r\n");
-                
+                // Get joblog
                 int joblogCurrentLenght = cmd.getServerJob().getJobLog().getLength();
                 QueuedMessage[] qMsg = cmd.getServerJob().getJobLog().getMessages(joblogPreviousLenght, joblogCurrentLenght);
                 
                 int errorNumber = 1;
                 int i = 0;                
                 while (i < qMsg.length) 
-                {  
-                    // Ignore CPF5C62=Client request - run command &2.
-                    // Ingore CPF5C61=Client request - run program &2/&1.
-                    if( qMsg[i].getID().equals("CPF5C62") || qMsg[i].getID().equals("CPF5C61") || qMsg[i].getID().equals("CZS0613") || qMsg[i].getID().equals("CPF3C50") ){
+                { 
+                    // ignore CPF5C62=Client request - run command &2.
+                    // ignore CPF5C61=Client request - run program &2/&1.
+                    // ignore CPF3C50=&1 program not created
+                    if( qMsg[i].getID().equals("CPF5C62") || qMsg[i].getID().equals("CPF5C61") || qMsg[i].getID().equals("CPF3C50") ){
                         i++;
                         continue;
+                    }
+                    
+                    // Syntax error - see listing or joblog
+                    if( qMsg[i].getID().equals("CZS0613") ){
+                        throw new SeeListingError();
                     }
                     
                     String helpText = qMsg[i].getHelp();
@@ -98,13 +118,15 @@ public class Iseries {
                     }
                     
                     // Id + text
-                    if( qMsg[i].getID().trim().equals("") == false ){
+                    if( qMsg[i].getID().trim().equals("") == false ){                        
                         System.err.println("Error n°" + errorNumber + " : " + qMsg[i].getID()+" - " +qMsg[i].getText());
                         errorNumber++;
+                        
+                        // Help text
+                        System.err.println(formatHelpText(helpText) );                                                
                     }
                     
-                    // Help text
-                    System.err.println(formatHelpText(helpText) + "\r\n");                        
+                    
                     
                     i++;
                 }      
@@ -117,7 +139,10 @@ public class Iseries {
             //Logger.getLogger(IbmICPP.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println(Date.nowFormatted2() + " : ERROR \t: "+ex.getMessage());
             return false;
-        }        
+        } catch (SeeListingError ex){
+            System.err.println(Date.nowFormatted2() + " : TODO \t: See listing error");
+            return false;
+        }       
         
         return true;
     }
@@ -141,12 +166,12 @@ public class Iseries {
             }
             
             // Remove "Recovery  . . . :"  
-/*            if( helpTextArr[i].contains("Recovery  . . . :")){
+            if( helpTextArr[i].contains("Recovery  . . . :")){
                 String fixedLine = helpTextArr[i].replace("Recovery  . . . :", "").trim();
                 helpText += fixedLine + "";
                 continue;
             }
-*/
+
         }
         
         return helpText;
@@ -157,5 +182,47 @@ public class Iseries {
             sys.disconnectAllServices();
             System.out.println(Date.nowFormatted2() + " : INFO \t: close connexion with " + sys.getSystemName());
         }
+    }
+    
+    public void downloadStmf(String pathR, String pathL){
+        
+        // Download
+        java.io.File f = null;
+        try {
+            f = new java.io.File(pathL);
+            // File exists ?
+            if( f.exists() ){                
+                f.delete();                
+            }
+            // Parent directory exist ?
+            if( f.getParentFile().exists() == false)
+                f.getParentFile().mkdirs();
+            
+            // Create
+            f.createNewFile();
+        } catch (IOException ex) {
+            //utils.logger.log(utils.logger.ERROR, "during creation of local file ( "+f.getAbsolutePath()+" )");
+        }
+        
+        // Ftp Connexion
+        if( ftp == null ){            
+            ftp = new AS400FTP(cmd.getSystem());
+            try {
+                ftp.setDataTransferType(AS400FTP.BINARY);                
+                if( ftp.connect() == false ){
+                    //utils.logger.log(utils.logger.ERROR, "during FTP connection");
+                }                
+            } catch (IOException ex) {            
+                //utils.logger.log(utils.logger.ERROR, "during FTP connection");
+            }
+        }
+        
+        // Download        
+        try {
+            ftp.get(pathR, f);                        
+        } catch (IOException ex) {
+            //utils.logger.log(utils.logger.ERROR, "during download");
+        }
+                
     }
 }

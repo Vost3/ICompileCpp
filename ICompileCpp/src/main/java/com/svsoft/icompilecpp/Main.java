@@ -122,10 +122,21 @@ public class Main {
     // Save parm following line reed
     boolean compileModule() {
         // Delete and ignore error
-        srv.runCMD("DLTMOD " + parms.getLibrary() + "/" + name, true);
+        srv.runCMD("DLTMOD " + parms.getLibrary() + "/" + name);
 
+        // Preparing for listing    
+        String localListingPath = System.getProperty("user.home")+"\\Downloads\\compile_" + name + ".txt";
+        File localListing = new File(localListingPath);
+        if(localListing.exists())
+            localListing.delete();
+        
+        srv.runCMD("QSH CMD('touch -C 1252 /tmp/compile_" + name + ".txt')");
+                 
+        // Compile command
         String cmdS = "CRTCPPMOD MODULE(" + parms.getLibrary() + "/" + name + ") SRCSTMF('" + parms.getRemoteDirectory() + parms.getFilePath() + "') TGTRLS(" + parms.getTGTRLS() + ")";
-
+        // Output for get
+        cmdS += " OUTPUT('/tmp/compile_"+name+".txt' "+name+") ";
+        
         if (modOptions != null) {
             cmdS += " " + modOptions;
         }
@@ -133,10 +144,14 @@ public class Main {
         cmdS += " DBGVIEW("+parms.getDebugView()+")";        
 
         System.out.print(Date.nowFormatted2() + " : INFO\t: module " + parms.getLibrary() + "/" + name + " ");
-        boolean compiled = srv.runCMD(cmdS);
+        boolean compiled = srv.runCompile(cmdS);
         if (compiled) {
             System.out.println("compiled successfully.");
+        }else{
+            // @TODO : test
+            srv.downloadStmf("/tmp/compile_" + name + ".txt", localListingPath);                        
         }
+        srv.runCMD("QSH CMD('rm /tmp/compile_" + name + ".txt')");
 
         return compiled;
     }
@@ -144,7 +159,7 @@ public class Main {
     // Compile the program
     void compileProgram() {
         // Delete and ignore error
-        srv.runCMD("DLTPGM " + parms.getLibrary() + "/" + name, true);
+        srv.runCMD("DLTPGM " + parms.getLibrary() + "/" + name);
 
         String cmdS = "CRTPGM PGM(" + parms.getLibrary() + "/" + name + ") MODULE(%s) TGTRLS(" + parms.getTGTRLS() + ")";
 
@@ -162,7 +177,7 @@ public class Main {
             cmdS += " " + pgmOptions;
         }
  
-        boolean compiled = srv.runCMD(cmdS);
+        boolean compiled = srv.runCompile(cmdS);
         if (compiled) {
             System.out.println("compiled successfully.");
         }
