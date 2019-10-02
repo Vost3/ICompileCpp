@@ -103,17 +103,17 @@ public class Main {
     // Save parm following line reed
     void dispatchLine(String line) {
         if (line.startsWith("NAME")) {
-            name = line.replace("NAME", "").trim();
+            name = line.replaceFirst("NAME", "").trim();
         } else if (line.startsWith("OPTMOD")) {
-            modOptions = line.replace("OPTMOD", "").trim();
+            modOptions = line.replaceFirst("OPTMOD", "").trim();
         } else if (line.startsWith("OPTPGM")) {
-            pgmOptions = line.replace("OPTPGM", "").trim();
+            pgmOptions = line.replaceFirst("OPTPGM", "").trim();
         } else if (line.startsWith("MOD")) {
-            String modulesTmp = line.replace("MOD", "").trim();
+            String modulesTmp = line.replaceFirst("MOD", "").trim();
             modules = modulesTmp.split(" ");
             isPgm = true;
         } else if (line.startsWith("PGM")) {
-            name = line.replace("PGM", "").trim();
+            name = line.replaceFirst("PGM", "").trim();
             isPgm = true;
         }
 
@@ -165,12 +165,16 @@ public class Main {
 
         // Get list of modules        
         String modulesFormated = parms.getLibrary() + "/" + name;   // hiself module
-        int i = 0;
-        while (i < modules.length) {
-            modulesFormated += " " + parms.getLibrary() + "/" + modules[i];
-            i++;
+        // Only if other modules found.
+        if( modules != null ){
+            int i = 0;
+            while (i < modules.length) {
+                modulesFormated += " " + parms.getLibrary() + "/" + modules[i];
+                i++;
+            }            
         }
-        cmdS = String.format(cmdS, modulesFormated);
+        
+        cmdS = String.format(cmdS, modulesFormated);            
 
         System.out.print(Date.nowFormatted2() + " : INFO\t: program " + parms.getLibrary() + "/" + name + " ");
         if (pgmOptions != null) {
