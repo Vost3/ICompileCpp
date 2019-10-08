@@ -55,8 +55,10 @@ public class Main {
 
     }
 
-    // read the file content
-    // TODO : opti ( 10 lines max without //# in beginnin )
+    /**
+     * read the current file content
+     * @return 
+     */
     private boolean readFile() {
         File f = new File(parms.getFilePath());
         if (f.exists() == false) {
@@ -71,15 +73,29 @@ public class Main {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        boolean inComment = false;
         try {
             String line = null;
             try {
                 line = br.readLine();
 
                 while (line != null) {
+                    // Tag found
                     if (line.startsWith("//#")) {
                         line = line.replace("//#", "");
                         dispatchLine(line);
+                    }
+                    
+                    // Comment multi-line
+                    if( line.trim().startsWith("/*") )
+                        inComment = true;
+                    
+                    if( line.trim().endsWith("*/") || line.contains("*/") )
+                        inComment = false;
+                    
+                    // Main prototype
+                    if ( !inComment && line.contains("main")) {
+                        isPgm = checkIfMainValid(line);
                     }
 
                     line = br.readLine();
@@ -113,13 +129,29 @@ public class Main {
             String modulesTmp = line.replaceFirst("MODULES", "").trim();
             modules = modulesTmp.split(" ");
             isPgm = true;
-        } else if (line.startsWith("PGM")) {
-            name = line.replaceFirst("PGM", "").trim();
-            isPgm = true;
         }
 
     }
-
+    
+    /**
+     * check if line contain valid main protoype and not commented
+     * @param line
+     * @return 
+     */
+    boolean checkIfMainValid(String line)
+    {
+        line = line.trim();
+        
+        // Main commented
+        if( line.startsWith("//") || line.startsWith("/*") )
+            return false;
+        
+        if( line.contains("argc") && line.contains("argv"))
+            return true;
+        
+        return false;
+    }
+    
     // Save parm following line reed
     boolean compileModule() {
         
