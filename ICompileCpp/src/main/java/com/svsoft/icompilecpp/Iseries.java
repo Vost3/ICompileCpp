@@ -44,17 +44,18 @@ public class Iseries {
     {
         // Connexion to signon service
         // Port 8476 ( SSL = 9476 )
+        System.out.print(Date.nowFormatted2() + " : INFO\t: connexion on " + sys.getSystemName());
         try {
             sys.connectService(AS400.SIGNON);
         } catch (AS400SecurityException | IOException ex) {
             //Logger.getLogger(Iseries.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println(Date.nowFormatted2() + " : INFO\t: " + ex.getMessage());
+            System.err.println(". ERROR\t: ( exception :" + ex.getMessage()+ " )");
             System.exit(1);
             return false;
         }        
         
         cmd = new CommandCall(sys);   
-        System.out.println(Date.nowFormatted2() + " : INFO\t: connected on " + sys.getSystemName());
+        System.err.println(" done.");
         return true;
     }
     
@@ -76,7 +77,7 @@ public class Iseries {
         }          
     }
     // Send command and resolve joblog if error
-    public boolean runCompile(String cmdS)
+    public boolean runCompile(String cmdS) throws SeeListingError
     {
         if( cmd == null )
             getCmd();
@@ -87,7 +88,7 @@ public class Iseries {
             // exec command
             if( cmd.run(cmdS) == false )
             {                                                           
-                System.out.println("failed.");                
+                System.out.println("failed. ("+cmdS+")");                
                 
                 // Get joblog
                 int joblogCurrentLenght = cmd.getServerJob().getJobLog().getLength();
@@ -107,7 +108,7 @@ public class Iseries {
                     
                     // Syntax error - see listing or joblog
                     if( qMsg[i].getID().equals("CZS0613") ){
-                        throw new SeeListingError();
+                        throw new SeeListingError();                        
                     }
                     
                     String helpText = qMsg[i].getHelp();
@@ -139,10 +140,7 @@ public class Iseries {
             //Logger.getLogger(IbmICPP.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println(Date.nowFormatted2() + " : ERROR \t: "+ex.getMessage());
             return false;
-        } catch (SeeListingError ex){
-            System.err.println(Date.nowFormatted2() + " : TODO \t: See listing error");
-            return false;
-        }       
+        }    
         
         return true;
     }
@@ -186,6 +184,8 @@ public class Iseries {
     
     public void downloadStmf(String pathR, String pathL){
         
+        System.out.print(Date.nowFormatted2() + " : INFO \t: downloading listing generated");
+        
         // Download
         java.io.File f = null;
         try {
@@ -201,7 +201,7 @@ public class Iseries {
             // Create
             f.createNewFile();
         } catch (IOException ex) {
-            //utils.logger.log(utils.logger.ERROR, "during creation of local file ( "+f.getAbsolutePath()+" )");
+            System.out.println(". ERROR (during creation of local file '"+f.getAbsolutePath()+"' )");            
         }
         
         // Ftp Connexion
@@ -210,18 +210,21 @@ public class Iseries {
             try {
                 ftp.setDataTransferType(AS400FTP.BINARY);                
                 if( ftp.connect() == false ){
+                    System.out.println(". ERROR ( ftp connect )");
                     //utils.logger.log(utils.logger.ERROR, "during FTP connection");
                 }                
             } catch (IOException ex) {            
+                System.out.println(". ERROR ( exception ftp connexion )");
                 //utils.logger.log(utils.logger.ERROR, "during FTP connection");
             }
         }
         
         // Download        
         try {
-            ftp.get(pathR, f);                        
+            ftp.get(pathR, f);         
+            System.out.println(" done.");
         } catch (IOException ex) {
-            //utils.logger.log(utils.logger.ERROR, "during download");
+            System.out.println(". ERROR ( exception during download)");            
         }
                 
     }
