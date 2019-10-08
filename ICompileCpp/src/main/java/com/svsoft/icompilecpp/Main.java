@@ -109,8 +109,8 @@ public class Main {
             modOptions = line.replaceFirst("OPTMOD", "").trim();
         } else if (line.startsWith("OPTPGM")) {
             pgmOptions = line.replaceFirst("OPTPGM", "").trim();
-        } else if (line.startsWith("MOD")) {
-            String modulesTmp = line.replaceFirst("MOD", "").trim();
+        } else if (line.startsWith("MODULES") ) {
+            String modulesTmp = line.replaceFirst("MODULES", "").trim();
             modules = modulesTmp.split(" ");
             isPgm = true;
         } else if (line.startsWith("PGM")) {
