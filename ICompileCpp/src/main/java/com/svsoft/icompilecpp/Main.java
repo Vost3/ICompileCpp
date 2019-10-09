@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -159,6 +160,10 @@ public class Main {
         String localListingPath = System.getProperty("user.home")+"\\Downloads\\compile_" + name + ".txt";
         // TODO: add username in path
         String remoteListingPath = "/tmp/compile_" + name + ".txt";
+        String srcstmf = parms.getRemoteDirectory() + parms.getFilePath();
+        if( srcstmf.contains("\\") )
+            srcstmf = srcstmf.replaceAll(Pattern.quote("\\"), "/");
+            
         try {
             // Delete and ignore error
             srv.runCMD("DLTMOD " + parms.getLibrary() + "/" + name);
@@ -168,10 +173,10 @@ public class Main {
             if(localListing.exists())
                 localListing.delete();
             
-            srv.runCMD("QSH CMD('touch -C 1252 /tmp/compile_" + name + ".txt')");
+            srv.runCMD("QSH CMD('touch -C 1252 /tmp/compile_" + name + ".txt')");           
             
             // Compile command
-            String cmdS = "CRTCPPMOD MODULE(" + parms.getLibrary() + "/" + name + ") SRCSTMF('" + parms.getRemoteDirectory() + parms.getFilePath() + "') TGTRLS(" + parms.getTGTRLS() + ")";
+            String cmdS = "CRTCPPMOD MODULE(" + parms.getLibrary() + "/" + name + ") SRCSTMF('" + srcstmf + "') TGTRLS(" + parms.getTGTRLS() + ")";
             // Output for get
             cmdS += " OUTPUT('/tmp/compile_"+name+".txt' "+name+") ";
             cmdS += " OPTION(*SHOWINC *NOSHOWSYS)";
