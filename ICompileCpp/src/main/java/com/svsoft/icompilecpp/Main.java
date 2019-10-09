@@ -45,14 +45,15 @@ public class Main {
     Main(String[] args) {
         // Get all argument
         parms = new Arguments(args);
-        srv = new Iseries(parms);
-
+        
         readFile();
+                
         if (compileModule() && isPgm) {
             compileProgram();
         }
-
-        srv.disconnect();
+        
+        if( srv != null )
+            srv.disconnect();
 
     }
 
@@ -154,7 +155,15 @@ public class Main {
     }
     
     // Save parm following line reed
-    boolean compileModule() {
+    boolean compileModule() 
+    {        
+        if( name == null ){
+            System.out.print(Date.nowFormatted2() + " : ERROR\t: name of module not defined ( see documentation by '-help' )");
+            return false;
+        }            
+        
+        // Connect to iseries
+        srv = new Iseries(parms);
         
         boolean compiled = false;
         String localListingPath = System.getProperty("user.home")+"\\Downloads\\compile_" + name + ".txt";
@@ -178,7 +187,7 @@ public class Main {
             // Compile command
             String cmdS = "CRTCPPMOD MODULE(" + parms.getLibrary() + "/" + name + ") SRCSTMF('" + srcstmf + "') TGTRLS(" + parms.getTGTRLS() + ")";
             // Output for get
-            cmdS += " OUTPUT('/tmp/compile_"+name+".txt' "+name+") ";
+            cmdS += " OUTPUT('"+remoteListingPath+"' "+name+") ";
             cmdS += " OPTION(*SHOWINC *NOSHOWSYS)";
             
             if (modOptions != null) {
@@ -276,7 +285,7 @@ public class Main {
                         showNextLine = false;
                     }
                     
-                    // error described
+                    // error described in listing generated
                     if (line.startsWith("===") && line.endsWith("==^")) {
                         showNextLine = true;
                     }

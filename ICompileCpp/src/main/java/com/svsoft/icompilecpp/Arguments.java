@@ -214,7 +214,7 @@ public class Arguments {
                 }else 
                     // File paht relative of workspace
                     if( currentArgs.equalsIgnoreCase("-file") || currentArgs.equals("-f") ){
-                    filePath = getNextArg(args, i);                    
+                    filePath = getNextArg(args, i);                                        
                     argTreated = true;                    
                 }else 
                     // Workspace directory on Server
@@ -280,7 +280,7 @@ public class Arguments {
             }
                                     
         } catch (java.lang.ArrayIndexOutOfBoundsException ex ){
-            System.err.println("ERROR \t: " + ex.getMessage() + " ( please check the documentation )");            
+            System.err.println("ERROR \t: " + ex.getMessage() + " ( please see documentation '-help')");            
             System.exit(1);
         } catch (NumberFormatException ex) {           
             System.err.println(ex.toString());
@@ -336,14 +336,14 @@ public class Arguments {
     
     private void getHelp(){
         System.out.println("------------------------------");
-        System.out.println("-- Help ibmI CRT CPP        --");
+        System.out.println("-- Help ibmI compile CPP    --");
         System.out.println("------------------------------");
         
         System.out.println("-ip                     : ip or dns         [ Required ]");
         System.out.println("-user | -usr            : user login        [ Required ]");
-        System.out.println("-password | -pwd        : password          [ Required ]");        
+        System.out.println("-password | -pwd        : password                      ");        
         System.out.println("-file | -f              : input file        [ Required ]");
-        System.out.println("-rmtd | remoteDir       : path              [ Required ]");        
+        System.out.println("-rdir                   : path              [ Required ]");        
         System.out.println("-l | -lib | -library    : library of compilation");        
         System.out.println("-dbgview                : set debug view(*all)");        
         System.out.println("-tgtrls                 : set target release");        
