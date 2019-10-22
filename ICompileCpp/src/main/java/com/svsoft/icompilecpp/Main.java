@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.svsoft.icompilecpp;
 
 import com.svsoft.icompilecpp.exception.SeeListingError;
@@ -20,9 +15,8 @@ import java.util.regex.Pattern;
  * @author Vogel Steve 
  * TODO: 
  * - compile without tag #NAME 
- * - check target release wanted can be reach on current server 
- * - verbose mode 
- * - logguer
+ * - check target release wanted can be reach on current server  
+ * - logger
  */
 public class Main {
 
