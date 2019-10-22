@@ -167,9 +167,9 @@ public class Main {
         
         boolean compiled = false;
         // TODO: manage path for linux
-        String localListingPath = System.getProperty("user.home")+"\\Downloads\\compile_" + name + ".txt";
-        // TODO: add username in path
-        String remoteListingPath = "/tmp/compile_" + name + ".txt";
+        String localListingPath = System.getProperty("user.home")+"\\Downloads\\compile_" + name + ".txt";        
+        String remoteListingPath = "/tmp/compile_"+parms.getUser()+"_" + name + ".txt";
+        
         String srcstmf = parms.getRemoteDirectory() + parms.getFilePath();
         if( srcstmf.contains("\\") )
             srcstmf = srcstmf.replaceAll(Pattern.quote("\\"), "/");
@@ -198,27 +198,29 @@ public class Main {
             cmdS += " DBGVIEW("+parms.getDebugView()+")";
             
             if( parms.verboseMode() )
-                System.out.print(Date.nowFormatted2() + " : DEBUG\t: program " + cmdS);
+                System.out.println(Date.nowFormatted2() + " : DEBUG\t: program " + cmdS);
             
             System.out.print(Date.nowFormatted2() + " : INFO\t: module " + parms.getLibrary() + "/" + name + " ");
             compiled = srv.runCompile(cmdS);
             if (compiled) {
                 System.out.println("compiled successfully.");
             }else{
-                srv.downloadStmf("/tmp/compile_" + name + ".txt", localListingPath);
+                srv.downloadStmf(remoteListingPath, localListingPath);
             }                
             
         } catch (SeeListingError ex) {            
-            srv.downloadStmf("/tmp/compile_" + name + ".txt", localListingPath);     
+            srv.downloadStmf(remoteListingPath, localListingPath);     
             readListing(localListingPath);
         }finally {            
-            srv.runCMD("QSH CMD('rm /tmp/compile_" + name + ".txt')");            
+            srv.runCMD("QSH CMD('rm "+remoteListingPath+"')");            
         }                        
         
         return compiled;
     }
 
-    // Compile the program
+    /**
+     * Compile the program
+     */
     void compileProgram() {
         // Delete and ignore error
         srv.runCMD("DLTPGM " + parms.getLibrary() + "/" + name);
@@ -242,7 +244,7 @@ public class Main {
             cmdS += " " + pgmOptions;
         }
         if( parms.verboseMode() )
-            System.out.print(Date.nowFormatted2() + " : DEBUG\t: program " + cmdS);
+            System.out.println(Date.nowFormatted2() + " : DEBUG\t: program " + cmdS);
                
         System.out.print(Date.nowFormatted2() + " : INFO\t: program " + parms.getLibrary() + "/" + name + " ");
         boolean compiled = false;
