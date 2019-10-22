@@ -1,0 +1,23 @@
+{    
+    "version": "2.0.0",    
+    "tasks": [
+        {
+            "label": "ICompile Cpp",
+            "type": "shell",
+            "command": "cd ${workspaceRoot}; ICompileCpp.bat -ip 192.168.1.1 -usr YOUR_LOGIN -pwd YOUR_PASSWORD -f ${relativeFile} -rdir /Directory/OtherOneForYourProject -lib YOUR_LIB",            
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
