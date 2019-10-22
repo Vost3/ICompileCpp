@@ -1,0 +1,1 @@
+@java -jar %~dp0\ICompileCpp\target\ICompileCpp-1.0-SNAPSHOT-jar-with-dependencies.jar %*
