@@ -166,6 +166,7 @@ public class Main {
         srv = new Iseries(parms);
         
         boolean compiled = false;
+        // TODO: manage path for linux
         String localListingPath = System.getProperty("user.home")+"\\Downloads\\compile_" + name + ".txt";
         // TODO: add username in path
         String remoteListingPath = "/tmp/compile_" + name + ".txt";
@@ -195,6 +196,9 @@ public class Main {
             }
             
             cmdS += " DBGVIEW("+parms.getDebugView()+")";
+            
+            if( parms.verboseMode() )
+                System.out.print(Date.nowFormatted2() + " : DEBUG\t: program " + cmdS);
             
             System.out.print(Date.nowFormatted2() + " : INFO\t: module " + parms.getLibrary() + "/" + name + " ");
             compiled = srv.runCompile(cmdS);
@@ -232,13 +236,15 @@ public class Main {
             }            
         }
         
-        cmdS = String.format(cmdS, modulesFormated);            
-
-        System.out.print(Date.nowFormatted2() + " : INFO\t: program " + parms.getLibrary() + "/" + name + " ");
+        cmdS = String.format(cmdS, modulesFormated);                    
+                
         if (pgmOptions != null) {
             cmdS += " " + pgmOptions;
         }
- 
+        if( parms.verboseMode() )
+            System.out.print(Date.nowFormatted2() + " : DEBUG\t: program " + cmdS);
+               
+        System.out.print(Date.nowFormatted2() + " : INFO\t: program " + parms.getLibrary() + "/" + name + " ");
         boolean compiled = false;
         try {
             compiled = srv.runCompile(cmdS);
@@ -248,7 +254,7 @@ public class Main {
         
         if (compiled) {
             System.out.println("compiled successfully.");
-        }
+        }                           
     }
     
     /**

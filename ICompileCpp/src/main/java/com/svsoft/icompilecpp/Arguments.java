@@ -1,8 +1,6 @@
 package com.svsoft.icompilecpp;
 
 import com.svsoft.icompilecpp.exception.ArgumentNotValid;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class of argument for manage argument send like bash
@@ -49,6 +47,10 @@ public class Arguments {
      * debug view ( see command CRTCPPMOD DBGVIEW )
      */
     private String dbgview = "*NONE";
+    /**
+     * verbose mode ( show debug during compile )
+     */
+    private boolean verbose = false;
 
 
     /**
@@ -188,6 +190,13 @@ public class Arguments {
     public String getDebugView(){
         return dbgview;
     }
+    /**
+     * get if verbose mode is enabled
+     * @return verbose
+     */
+    public boolean verboseMode() {
+        return verbose;
+    }
     /*
     * @params : args send to te program
     * result : boolean if all parms mandatory recevied
@@ -259,6 +268,11 @@ public class Arguments {
                     // Password for Server login
                     if( currentArgs.equals("-password") || currentArgs.equals("-pwd") ){
                     password = getNextArg(args, i);
+                    argTreated = true;                     
+                }else
+                    // Verbose mode
+                    if( currentArgs.equals("-v") ){
+                    verbose = true;
                     argTreated = true;                     
                 }else
                     // Help
@@ -347,6 +361,7 @@ public class Arguments {
         System.out.println("-l | -lib | -library    : library of compilation");        
         System.out.println("-dbgview                : set debug view(*all)");        
         System.out.println("-tgtrls                 : set target release");        
+        System.out.println("-v                      : see all commande send on iseries");        
         
         
     }
