@@ -24,8 +24,7 @@ If you see the help you're the best ;)
 | `-v`   | flag       | no       | put the program in debug mode. see command send, ect ...  |
 
 
-### Usage
-**Visual Studio Code**
+### Usage with Visual Studio Code
 For upload your files when its saved use the excellent extension of @liximo `SFTP` 
 For compile current file create a tasks.json within your project directory.
 ```json
