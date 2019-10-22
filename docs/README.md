@@ -1,14 +1,14 @@
 # ICompileCpp project
-*Compile C++ on IBM i in remote become easy.
-Work in progress. So be indulgent ;)
-Don't hesitate to open ticket for any issues or demand of features
+*Compile C++ on IBM i in remote become easy.<br />
+Work in progress. So be indulgent ^^ <br />
+Don't hesitate to open ticket for any issues or demand of features <br />
 Feel free to contribute*
 
 ### Installation
-Clone this repository.
-Add in your path the directory of the local repository.
-Open cmd prompt and type `ICompileCpp.bat`.
-If you see the help you're the best ;)
+Clone this repository.<br />
+Add in your path the directory of the local repository.<br />
+Open cmd prompt and type `ICompileCpp.bat`.<br />
+If you see the help you're the best ;)<br />
 
 ## Parameters
 | name                    | type      | mandatory | description | possible values |
@@ -25,8 +25,8 @@ If you see the help you're the best ;)
 
 
 ### Usage with Visual Studio Code
-For upload your files when its saved use the excellent extension of @liximo `SFTP` 
-For compile current file create a tasks.json within your project directory.
+For upload your files when its saved use the excellent extension of @liximo `SFTP`.<br />
+For compile current file create a `tasks.json` within your project directory.<br />
 ```json
 {    
     "version": "2.0.0",    
