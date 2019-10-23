@@ -162,7 +162,7 @@ public class Main {
         boolean compiled = false;
         // TODO: manage path for linux
         String localListingPath = System.getProperty("user.home")+"\\Downloads\\compile_" + name + ".txt";        
-        String remoteListingPath = "/tmp/compile_"+parms.getUser()+"_" + name + ".txt";
+        String remoteListingPath = parms.getRemoteDirectory() + "compile_"+parms.getUser()+"_" + name + ".txt";
         
         String srcstmf = parms.getRemoteDirectory() + parms.getFilePath();
         if( srcstmf.contains("\\") )
