@@ -1,1 +1,3 @@
 /ICompileCpp/target/
+.vscode
+ICompileCpp/nbactions-debug-profile.xml
