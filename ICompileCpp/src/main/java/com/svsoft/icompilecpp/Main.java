@@ -58,7 +58,7 @@ public class Main {
     private boolean readFile() {
         File f = new File(parms.getFilePath());
         if (f.exists() == false) {
-            System.err.println(Date.nowFormatted2() + " : ERROR\t: " + parms.getFilePath() + " not found.");
+            System.err.println(Date.nowFormatted2() + " : ERROR\t: " + f.getAbsolutePath()+ " not found.");
             System.exit(1);
         }
 
@@ -270,7 +270,7 @@ public class Main {
     private boolean readListing(String path) {
         File f = new File(path);
         if (f.exists() == false) {
-            System.err.println(Date.nowFormatted2() + " : ERROR\t: " + path + " not found.");
+            System.err.println(Date.nowFormatted2() + " : ERROR\t: " + f.getAbsolutePath() + " not found.");
             return false;
         }
 
