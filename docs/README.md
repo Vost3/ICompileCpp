@@ -4,22 +4,26 @@ Work in progress. So be indulgent ^^ <br />
 Don't hesitate to open ticket for any issues or demand of features <br />
 Feel free to contribute*
 
+### Requirement
+- Java 8
+- IBMI i V6R1 till V7R4
+
 ### Installation
 Clone this repository.<br />
 Add in your path the directory of the local repository.<br />
 Open cmd prompt and type `ICompileCpp.bat`.<br />
 If you see the help you're the best ;)<br />
 
-## Parameters
+## Command arguments
 | name                    | type      | mandatory | description | possible values |
 |:--------------------|:----------|:----------|:------------|:------------|
 | `-ip`            | str       | yes       | local ip of your AS 400 |
-| `-user`  `-usr`   | str       | yes       | user profil |
-| `-password` `-pwd`   | str       | yes       | password |
-| `-file`  `-f`   | str       | yes       | the *.cpp file path relative of current directory |
+| `-user` <br /> `-usr`   | str       | yes       | user profil |
+| `-password` <br /> `-pwd`   | str       | yes       | password |
+| `-file` <br /> `-f`   | str       | yes       | the *.cpp file path relative of current directory |
 | `-rdir`   | str       | yes       | the remote directory where is uploaded your sources |
-| `-l` `-library` `-lib`   | str       | no       | library where the programs or modules going to be compile ( *CURLIB by default) |
-| `-dbgview`   | flag       | no       | compile with DBGVIEW(*ALL) ( *NONE by default ) |
+| `-l` <br /> `-library` <br /> `-lib`   | str       | no       | library where the programs or modules going to be compile ( *CURLIB by default) |
+| `-dbgview`   | str       | no       | compile with DBGVIEW(*ALL) ( *NONE by default ) | *NONE / *ALL / *STMT / *SOURCE / *LIST
 | `-tgtrls`   | str       | no       | target release ( *PRV by default ) |  *CURRENT / *PRV / VXRXMX ( following the release of your system ) |
 | `-v`   | flag       | no       | put the program in debug mode. see command send, ect ...  |
 
@@ -53,7 +57,7 @@ For compile current file create a `tasks.json` within your project directory.<br
 }
 ```
 
-## Tags
+## File Tags
 Begin your source file with the following tags for name this one, bind modules, add module or pgm options
 
 | name                 |mandatory | description | 
@@ -61,7 +65,7 @@ Begin your source file with the following tags for name this one, bind modules, 
 | `#NAME`             |yes       | name of your module and program |
 | `#OPTPGM`           |no        | Parameter for the CRTPGM command ( see CRTPGM 5250 screen ) | 
 | `#OPTMOD`           |no        | Parameter for the CRTCPPMOD command ( see CRTCPPMOD 5250 screen ) | 
-| `#MODULES`          |no        | List of module should be bind with PGM ( can be replaced in `#OPTPGM` tag by parameter 'MODULE(YOURLIB/YOURMODULE ECT/ECT)' ) | 
+| `#MODULES`          |no        | List of module should be bind with PGM ( can be replaced in `#OPTPGM` tag by parameter 'MODULE(LIB/YOURMODULE LIB/ANOTHERMODULE)' ) | 
 
 ```cpp
 //#NAME PGM_HELLO
@@ -69,13 +73,12 @@ Begin your source file with the following tags for name this one, bind modules, 
 //#OPTMOD PACKSTRUCT(1)
 //#MODULES MOD_1 MOD_2
 ```
-Soon an exemple of program with module
+Soon an exemple of program and module
 
-### Compatibility 
-Tested on V6R1 till V7R4
+## Built With
 
-### Requirement
-- Java 8
+* [NetBeans](https://netbeans.org/) - A simple IDE
+* [Maven](https://maven.apache.org/) - Dependency Management
 
 ### Coming soon
 - [ ] Requirements ;)
