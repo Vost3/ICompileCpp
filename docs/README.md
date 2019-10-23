@@ -1,4 +1,5 @@
 # ICompileCpp project
+[![License: IPL 1.0](https://img.shields.io/badge/License-IPL%201.0-blue.svg)](https://opensource.org/licenses/IPL-1.0) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) <br />
 *Compile C++ on IBM i in remote become easy.<br />
 Work in progress. So be indulgent ^^ <br />
 Don't hesitate to open ticket for any issues or demand of features <br />
@@ -9,6 +10,7 @@ Feel free to contribute*
 * IBMI i V6R1 till V7R4
 * port 21
 * port 8476 for JT400 ( [see details here](https://javadoc.midrange.com/ports.php) )
+* [Toolbox for Java and JTOpen](https://developer.ibm.com/articles/i-javatoolbox/)
 
 ### Installation
 Clone this repository.<br />
