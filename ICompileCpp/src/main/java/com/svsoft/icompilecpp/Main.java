@@ -280,7 +280,8 @@ public class Main {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-
+        
+        int lineShowed = 0;
         try {
             boolean showNextLine = false;
             String line = null;
@@ -293,6 +294,7 @@ public class Main {
                         System.err.println( line );
                         // reset
                         showNextLine = false;
+                        lineShowed++;
                     }
                     
                     // error described in listing generated
@@ -301,8 +303,7 @@ public class Main {
                     }
 
                     line = br.readLine();
-
-                }
+                }                                
 
             } catch (IOException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -315,8 +316,13 @@ public class Main {
             } catch (IOException ex) {
                 return false;
             }
-        }
-
+        }               
+        
+        if( lineShowed == 0 ){
+            System.err.println(Date.nowFormatted2() + " : ERROR\t: during read of listing.");
+            return false;
+        }            
+            
         return true;
     }
 }
