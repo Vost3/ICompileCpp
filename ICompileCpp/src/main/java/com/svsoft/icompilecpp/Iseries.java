@@ -106,6 +106,12 @@ public class Iseries {
                         continue;
                     }
                     
+                    // The compiler is not found on the system.
+                    if( qMsg[i].getID().equals("CZS0615") ){
+                        System.err.println("Error n°" + errorNumber + " : " + qMsg[i].getID()+" - " +qMsg[i].getText());
+                        return false;                     
+                    }
+                    
                     // Syntax error - see listing or joblog
                     if( qMsg[i].getID().equals("CZS0613") ){
                         throw new SeeListingError();                        
