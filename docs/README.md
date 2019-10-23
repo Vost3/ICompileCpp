@@ -5,8 +5,10 @@ Don't hesitate to open ticket for any issues or demand of features <br />
 Feel free to contribute*
 
 ### Requirement
-- Java 8
-- IBMI i V6R1 till V7R4
+* Java 8
+* IBMI i V6R1 till V7R4
+* port 21
+* port 8476 for JT400 ( [see details here](https://javadoc.midrange.com/ports.php) )
 
 ### Installation
 Clone this repository.<br />
