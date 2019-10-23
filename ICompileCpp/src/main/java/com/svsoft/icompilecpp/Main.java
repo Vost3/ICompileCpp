@@ -177,7 +177,8 @@ public class Main {
             if(localListing.exists())
                 localListing.delete();
             
-            srv.runCMD("QSH CMD('touch -C 1252 /tmp/compile_" + name + ".txt')");           
+            srv.runCMD("QSH CMD('rm "+remoteListingPath+"')");  
+            srv.runCMD("QSH CMD('touch -C 1252 "+remoteListingPath+"')");           
             
             // Compile command
             String cmdS = "CRTCPPMOD MODULE(" + parms.getLibrary() + "/" + name + ") SRCSTMF('" + srcstmf + "') TGTRLS(" + parms.getTGTRLS() + ")";
