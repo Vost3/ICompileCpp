@@ -182,7 +182,7 @@ public class Iseries {
         }
     }
     
-    public void downloadStmf(String pathR, String pathL){
+    public boolean downloadStmf(String pathR, String pathL){
         
         System.out.print(Date.nowFormatted2() + " : INFO \t: downloading listing generated");
         
@@ -201,7 +201,8 @@ public class Iseries {
             // Create
             f.createNewFile();
         } catch (IOException ex) {
-            System.out.println(". ERROR (during creation of local file '"+f.getAbsolutePath()+"' )");            
+            System.out.println(". ERROR (during creation of local file '"+f.getAbsolutePath()+"' )");    
+            return false;
         }
         
         // Ftp Connexion
@@ -210,22 +211,31 @@ public class Iseries {
             try {
                 ftp.setDataTransferType(AS400FTP.BINARY);                
                 if( ftp.connect() == false ){
-                    System.out.println(". ERROR ( ftp connect )");
+                    System.out.println(". ERROR ( during connect. "+ ftp.getLastMessage() +" )");
+                    return false;
                     //utils.logger.log(utils.logger.ERROR, "during FTP connection");
                 }                
             } catch (IOException ex) {            
                 System.out.println(". ERROR ( exception ftp connexion )");
+                return false;
                 //utils.logger.log(utils.logger.ERROR, "during FTP connection");
             }
         }
         
         // Download        
         try {
-            ftp.get(pathR, f);         
-            System.out.println(" done.");
+            if( ftp.get(pathR, f) == false ){
+                System.out.print(" failed. ");    
+                System.out.println("ERROR ( "+ ftp.getLastMessage() +")");                    
+                return false;                
+            }else{
+                System.out.println(" done.");    
+            }                    
         } catch (IOException ex) {
             System.out.println(". ERROR ( exception during download)");            
+            return false;
         }
                 
+        return true;
     }
 }

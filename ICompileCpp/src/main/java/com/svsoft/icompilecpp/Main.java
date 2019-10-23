@@ -200,11 +200,18 @@ public class Main {
             if (compiled) {
                 System.out.println("compiled successfully.");
             }else{
-                srv.downloadStmf(remoteListingPath, localListingPath);
+                boolean downloaded = srv.downloadStmf(remoteListingPath, localListingPath);
+                // error during download
+                if( !downloaded )
+                    return false;
             }                
             
         } catch (SeeListingError ex) {            
-            srv.downloadStmf(remoteListingPath, localListingPath);     
+            boolean downloaded = srv.downloadStmf(remoteListingPath, localListingPath);     
+            // error during download
+            if( !downloaded )
+                return false;
+            
             readListing(localListingPath);
         }finally {            
             srv.runCMD("QSH CMD('rm "+remoteListingPath+"')");            
