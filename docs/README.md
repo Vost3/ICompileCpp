@@ -15,8 +15,8 @@ Open cmd prompt and type `ICompileCpp.bat`.<br />
 If you see the help you're the best ;)<br />
 
 ## Command arguments
-| name                    | type      | mandatory | description | possible values |
-|:--------------------|:----------|:----------|:------------|:------------|
+| argument name           | type      | mandatory | description | possible values |
+|:------------------------|:----------|:----------|:------------|:------------|
 | `-ip`            | str       | yes       | local ip of your AS 400 |
 | `-user` <br /> `-usr`   | str       | yes       | user profil |
 | `-password` <br /> `-pwd`   | str       | yes       | password |
@@ -80,7 +80,7 @@ Soon an exemple of program and module
 * [NetBeans](https://netbeans.org/) - A simple IDE
 * [Maven](https://maven.apache.org/) - Dependency Management
 
-### Coming soon
+## Coming soon
 - [ ] Requirements ;)
 - [ ] Ask password in hidden
 - [ ] Save password during 24 hours
