@@ -201,10 +201,7 @@ public class Main {
             if (compiled) {
                 System.out.println("compiled successfully.");
             }else{
-                boolean downloaded = srv.downloadStmf(remoteListingPath, localListingPath);
-                // error during download
-                if( !downloaded )
-                    return false;
+                return false;
             }                
             
         } catch (SeeListingError ex) {            

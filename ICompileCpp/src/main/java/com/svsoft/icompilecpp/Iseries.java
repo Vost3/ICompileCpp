@@ -104,14 +104,8 @@ public class Iseries {
                     if( qMsg[i].getID().equals("CPF5C62") || qMsg[i].getID().equals("CPF5C61") || qMsg[i].getID().equals("CPF3C50") ){
                         i++;
                         continue;
-                    }
-                    
-                    // The compiler is not found on the system.
-                    if( qMsg[i].getID().equals("CZS0615") ){
-                        System.err.println("Error n°" + errorNumber + " : " + qMsg[i].getID()+" - " +qMsg[i].getText());
-                        return false;                     
-                    }
-                    
+                    }                                        
+                                         
                     // Syntax error - see listing or joblog
                     if( qMsg[i].getID().equals("CZS0613") ){
                         throw new SeeListingError();                        
@@ -127,20 +121,26 @@ public class Iseries {
                     // Id + text
                     if( qMsg[i].getID().trim().equals("") == false ){                        
                         System.err.println("Error n°" + errorNumber + " : " + qMsg[i].getID()+" - " +qMsg[i].getText());
-                        errorNumber++;
+                        errorNumber++;                                                
                         
-                        // Help text
-                        System.err.println(formatHelpText(helpText) );                                                
+                        // The compiler is not found on the system.
+                        if( qMsg[i].getID().equals("CZS0615") ){                            
+                            return false;                     
+                        }else    
+                            // CZS0632 - Source stream file could not be opened
+                            if( qMsg[i].getID().equals("CZS0632") ){                            
+                                return false;                     
+                        }
+                        
+                        // Help text                        
+                        //System.err.println(formatHelpText(helpText) );         
                     }
                     
                     
                     
                     i++;
                 }      
-                
-                
-                
-                return false;
+                                                                
             }            
         } catch (AS400SecurityException | IOException | InterruptedException | PropertyVetoException | ErrorCompletingRequestException | ObjectDoesNotExistException ex) {
             //Logger.getLogger(IbmICPP.class.getName()).log(Level.SEVERE, null, ex);
