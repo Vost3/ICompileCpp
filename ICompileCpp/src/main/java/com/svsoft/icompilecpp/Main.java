@@ -40,7 +40,9 @@ public class Main {
         // Get all argument
         parms = new Arguments(args);
         
-        readFile();
+        boolean err = !readFile();
+        if( err )
+            System.exit(1);
                 
         if (compileModule() && isPgm) {
             compileProgram();
@@ -100,6 +102,7 @@ public class Main {
 
             } catch (IOException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
         } finally {
             // close
