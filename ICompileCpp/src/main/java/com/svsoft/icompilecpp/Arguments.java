@@ -345,6 +345,26 @@ public class Arguments {
             error = true;
         }
         
+        // user defined in command
+        if( !error && user == null ){
+            String login = null;
+            Console console = System.console();
+            // no console attribute to current JVM
+            if( console == null ){
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Please enter your login: ");
+                login = scanner.next();
+            }else{
+                login = new String(console.readPassword("Please enter your login: "));    
+            }
+            
+            if( login != null || login.length() == 0 ){
+                user = login;
+            }else{
+                error = true;
+            }
+        }
+        
         // password defined in command
         if( !error && password == null ){
             String pwd = null;
@@ -358,11 +378,11 @@ public class Arguments {
                 pwd = new String(console.readPassword("Please enter your password: "));    
             }
             
-            if( pwd != null ){
+            if( pwd != null  || pwd.length() == 0 ){
                 password = pwd;
             }else{
                 error = true;
-            }                
+            }
         }
         
         if( error ){
