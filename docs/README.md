@@ -85,8 +85,9 @@ Soon an exemple of program and module
 * [Maven](https://maven.apache.org/) - Dependency Management
 
 ## Coming soon
-- [ ] Requirements ;)
-- [ ] Ask password in hidden
+- [X] Requirements ;) *( 10/30/2019 )*
+- [X] Ask password in hidden *( 10/30/2019 )*
+- [ ] Compile current directory recursively
 - [ ] Save password during 24 hours
 - [ ] Encrypt password saved
 - [ ] Exemples of program
