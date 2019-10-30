@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,6 +44,14 @@ public class ConfDb {
         path += File.separator+"confdb.db";        
     }
     
+    void connexion(){
+        try {
+            conn = DriverManager.getConnection("jdbc:sqlite:"+path);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());            
+        }
+    }
+    
     boolean initDb()
     {                 
         File f = new File(path);
@@ -59,20 +68,82 @@ public class ConfDb {
                         "`ip`	TEXT NOT NULL UNIQUE," +
                         "`pass`	TEXT," +
                         "`login` TEXT,"+
-                        ",`updd` INTEGER NOT NULL);";
+                        "`updd` INTEGER DEFAULT 0);";
         
-        try             
-        {
-            conn = DriverManager.getConnection("jdbc:sqlite:"+path);
-            Statement stmt = conn.createStatement();
-            
+        try{
+            connexion();
+            Statement stmt = conn.createStatement();            
             // create a new table
             stmt.execute(sql);
+            
+            stmt.close();
+            close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
         }
         
         return true;
+    }
+    
+    private void close(){        
+        try {
+            conn.close();
+        } catch (SQLException ex) {
+            //Logger.getLogger(ConfDb.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        conn = null;
+    }
+    
+    /**
+     * Set host in db
+     * @param ip
+     * @param login
+     * @param password
+     * @return 
+     */
+    public int setHost(String ip, String login, String password){                
+                
+        int result = -1;
+        try {
+            String query = "INSERT INTO host ('ip', 'login', 'pass', 'updd') VALUES (?,?,?,?);";
+            connexion();
+            PreparedStatement stmt = conn.prepareStatement(query);            
+            stmt.setString(1, ip);
+            stmt.setString(2, login);
+            stmt.setString(3, password);
+            stmt.setLong(4, System.currentTimeMillis());            
+            result = stmt.executeUpdate();
+            stmt.close();
+            close();
+        } catch (SQLException ex) {                        
+            Logger.getLogger(ConfDb.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+        return result;
+    }
+    
+    /**
+     * clean host saved since more than x minutes
+     * @return 
+     */
+    public boolean clean(int minutes){                
+                
+        int nbSeconds = (minutes * 60);
+        long timestamp = System.currentTimeMillis() - nbSeconds;        
+        
+        boolean result = false;
+        try {
+            String sql = "DELETE FROM host WHERE updd < ? ;";     
+            connexion();
+            PreparedStatement pstmt = conn.prepareStatement(sql);            
+            pstmt.setLong(1, timestamp);
+            result = pstmt.execute();
+            pstmt.close();
+            close();
+        } catch (SQLException ex) {                        
+            Logger.getLogger(ConfDb.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
     }
 }
