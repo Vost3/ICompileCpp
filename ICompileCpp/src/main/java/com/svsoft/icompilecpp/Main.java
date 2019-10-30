@@ -43,7 +43,10 @@ public class Main {
         boolean err = !readFile();
         if( err )
             System.exit(1);
-                
+                        
+        // Connect to iseries
+        srv = new Iseries(parms);
+        
         if (compileModule() && isPgm) {
             compileProgram();
         }
@@ -157,10 +160,7 @@ public class Main {
         if( name == null ){
             System.out.print(Date.nowFormatted2() + " : ERROR\t: name of module not defined ( see documentation by '-help' )");
             return false;
-        }            
-        
-        // Connect to iseries
-        srv = new Iseries(parms);
+        }                           
         
         boolean compiled = false;
         // TODO: manage path for linux
