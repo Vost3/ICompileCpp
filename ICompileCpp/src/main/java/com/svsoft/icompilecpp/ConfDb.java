@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -14,6 +16,7 @@ import java.util.logging.Logger;
  */
 public class ConfDb {
     
+    private Connection conn = null;
     /**
      * path of confDb.db file
      */
@@ -51,15 +54,16 @@ public class ConfDb {
             return false;
         }
         // SQL statement for creating a new table
-        String sql = "CREATE TABLE IF NOT EXISTS hosts (\n"
-                + "    id integer PRIMARY KEY,\n"
-                + "    ip text NOT NULL,\n"
-                + "    password text"
-                + ");";
+        String sql =    "CREATE TABLE `host` (" +
+                        "`id`	INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "`ip`	TEXT NOT NULL UNIQUE," +
+                        "`pass`	TEXT," +
+                        "`login` TEXT,"+
+                        ",`updd` INTEGER NOT NULL);";
         
         try             
         {
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:"+path);
+            conn = DriverManager.getConnection("jdbc:sqlite:"+path);
             Statement stmt = conn.createStatement();
             
             // create a new table
