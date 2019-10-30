@@ -1,6 +1,8 @@
 package com.svsoft.icompilecpp;
 
 import com.svsoft.icompilecpp.exception.ArgumentNotValid;
+import java.io.Console;
+import java.util.Scanner;
 
 /**
  * Class of argument for manage argument send like bash
@@ -328,7 +330,9 @@ public class Arguments {
         return currentArg;
     }
     
-    
+    /**
+     * Check all argument required
+     */
     private void check(){
         boolean error = false;
         if( filePath == null ){
@@ -336,9 +340,29 @@ public class Arguments {
             error = true;
         }
         
-        if( remoteWorkspace == null ){
+        if( !error && remoteWorkspace == null ){
             System.err.println("ERROR \t: -rmtd argument is missing");
             error = true;
+        }
+        
+        // password defined in command
+        if( !error && password == null ){
+            String pwd = null;
+            Console console = System.console();
+            // no console attribute to current JVM
+            if( console == null ){
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Please enter your password: ");
+                pwd = scanner.next();
+            }else{
+                pwd = new String(console.readPassword("Please enter your password: "));    
+            }
+            
+            if( pwd != null ){
+                password = pwd;
+            }else{
+                error = true;
+            }                
         }
         
         if( error ){
