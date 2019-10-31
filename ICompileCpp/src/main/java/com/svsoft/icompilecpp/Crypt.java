@@ -152,8 +152,13 @@ public class Crypt {
             line = br.readLine();
         } catch (IOException ex) {
             // @TODO : log that
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);            
+        }finally{
+            try {
+                br.close();
+            } catch (IOException ex) {
+                //Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         
         key = line.trim();
