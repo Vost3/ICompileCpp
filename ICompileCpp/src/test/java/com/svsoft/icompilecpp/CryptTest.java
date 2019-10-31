@@ -16,6 +16,7 @@ public class CryptTest {
         String path = op.getPath();
         
         String oldKey = op.getKey();
+        Assert.assertEquals(512, oldKey.length());
         
         // Delete file
         File f = new File(path);
@@ -24,10 +25,20 @@ public class CryptTest {
         // Recreate
         op = new Crypt();
         f = new File(path);
+        
+        String newKey = op.getKey();
         Assert.assertTrue(f.exists());
-        Assert.assertNotSame(oldKey, op.getKey());
-        Assert.assertEquals(512, oldKey.length());
-        Assert.assertEquals(512, op.getKey().length());
+        Assert.assertNotSame("Key regenerated is the same", oldKey, newKey);        
+        Assert.assertEquals("Length of key is not equal to 512", 512, newKey.length());
+        
+        // Ropen
+        op = new Crypt();
+        Assert.assertEquals("Key is not the same after reopen", newKey, op.getKey());        
+        
+        // Encrypt and decrypt
+        String clearPhrase = "nianiania_truc_tatatoto";
+        String encryptPhrase = op.encrypt(clearPhrase);
+        String decryptPhrase = op.decrypt(encryptPhrase);        
     }
         
 }
