@@ -17,6 +17,7 @@ import java.util.logging.Logger;
  */
 public class DbHost {
     
+    private Crypt crp = null;
     private Connection conn = null;
     /**
      * path of confDb.db file
@@ -42,6 +43,7 @@ public class DbHost {
             dir.mkdir();
         
         path += File.separator+"confdb.db";        
+        crp = new Crypt();
     }
     
     void connexion(){
@@ -104,14 +106,18 @@ public class DbHost {
      */
     public int setHost(String ip, String login, String password){                
                 
+        String cryptedIp = crp.encrypt(ip);
+        String cryptedLogin = crp.encrypt(login);
+        String cryptedPass = crp.encrypt(password);
+        
         int result = -1;
         try {
             String query = "INSERT INTO host ('ip', 'login', 'pass', 'updd') VALUES (?,?,?,?);";
             connexion();
             PreparedStatement stmt = conn.prepareStatement(query);            
-            stmt.setString(1, ip);
-            stmt.setString(2, login);
-            stmt.setString(3, password);
+            stmt.setString(1, cryptedIp);
+            stmt.setString(2, cryptedLogin);
+            stmt.setString(3, cryptedPass);
             stmt.setLong(4, System.currentTimeMillis());            
             result = stmt.executeUpdate();
             stmt.close();
