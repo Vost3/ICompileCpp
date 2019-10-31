@@ -1,6 +1,7 @@
 package com.svsoft.icompilecpp;
 
 import java.io.File;
+import javax.crypto.SecretKey;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -15,8 +16,7 @@ public class CryptTest {
         Crypt op = new Crypt();
         String path = op.getPath();
         
-        String oldKey = op.getKey();
-        Assert.assertEquals(512, oldKey.length());
+        SecretKey oldKey = op.getKey();        
         
         // Delete file
         File f = new File(path);
@@ -26,10 +26,9 @@ public class CryptTest {
         op = new Crypt();
         f = new File(path);
         
-        String newKey = op.getKey();
+        SecretKey newKey = op.getKey();
         Assert.assertTrue(f.exists());
-        Assert.assertNotSame("Key regenerated is the same", oldKey, newKey);        
-        Assert.assertEquals("Length of key is not equal to 512", 512, newKey.length());
+        Assert.assertNotSame("Key regenerated is the same", oldKey, newKey);                
         
         // Ropen
         op = new Crypt();
@@ -40,7 +39,7 @@ public class CryptTest {
         String encryptPhrase = op.encrypt(clearPhrase);
         String decryptPhrase = op.decrypt(encryptPhrase);        
         
-        Assert.assertEquals("Key is not the same after reopen", clearPhrase, decryptPhrase);        
+        Assert.assertEquals("Error during decrypt", clearPhrase, decryptPhrase);        
     }
         
 }

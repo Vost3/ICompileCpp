@@ -5,12 +5,12 @@
  */
 package com.svsoft.icompilecpp;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
@@ -23,9 +23,9 @@ import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 /**
  *
@@ -56,8 +56,8 @@ public class Crypt {
         path += ".svsoft";
         path += File.separator+"icmpcppk.cfg";  
         
-        openFile(path);
-        Skey = new SecretKeySpec(getKey().getBytes(), "AES");                        
+        openFile(path);   
+        Skey = getKey();
     }
     
     public String getPath() {
@@ -75,9 +75,16 @@ public class Crypt {
             f.getParentFile().mkdirs(); 
             
             try {
-                f.createNewFile();                
-                key = getRandomKey(512);
-                writeKey(key);
+                f.createNewFile();      
+                KeyGenerator kgen = null;
+                try {
+                    kgen = KeyGenerator.getInstance("AES");
+                    kgen.init(256);
+                } catch (NoSuchAlgorithmException ex) {
+                    Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                Skey = kgen.generateKey();                
+                saveKey(Skey);
             } catch (IOException ex) {
                 //@TODO : log that
                 Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
@@ -85,43 +92,26 @@ public class Crypt {
             }
         }            
         return true;        
-    }
-    
-    /**
-     * Generate random key
-     * @param length
-     * @return 
-     */
-    public String getRandomKey(int length) 
-    {
-        Set<String> identifiers = new HashSet<String>();
-        Random rand = new Random();    
-        StringBuilder builder = new StringBuilder();
-        while(builder.toString().length() == 0) {            
-            for(int i = 0; i < length; i++) {
-                builder.append(lexicon.charAt(rand.nextInt(lexicon.length())));
-            }
-            if(identifiers.contains(builder.toString())) {
-                builder = new StringBuilder();
-            }
-        }
-        return builder.toString();
-    }
+    }    
     
     /**
      * Write key in file
      * @param data 
      */
-    private void writeKey(String data) {
+    private void saveKey(SecretKey data) {
         OutputStream outStream = null;
+        ObjectOutputStream objectOutputStream = null;
         try {
-            outStream = new FileOutputStream(f);
-            outStream.write(data.getBytes(), 0, data.length());
+            outStream = new FileOutputStream(f);            
+            objectOutputStream = new ObjectOutputStream(outStream);
+            objectOutputStream.writeObject(data);
+            
         } catch (IOException e) {
             //@TODO : log that
             Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, e);            
         }finally{
             try {
+                objectOutputStream.close();
                 outStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -133,36 +123,28 @@ public class Crypt {
      * get key from file
      * @return key
      */
-    public String getKey(){
+    public SecretKey getKey(){
         
         // Key already read
-        if( key != null )
-            return key;
+        if( Skey != null )
+            return Skey;
         
-        // Go to read from file
-        String line = null;
-        BufferedReader br = null;
+        SecretKey SkeyLocal = null;
+        // Go to read from file                        
         try {
-            br = new BufferedReader(new FileReader(f));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        try {
-            line = br.readLine();
+            ObjectInputStream ois = null;               
+            ois = new ObjectInputStream(new FileInputStream(f));
+            SkeyLocal = (SecretKey) ois.readObject();
+            ois.close();            
+        }catch (ClassNotFoundException ex) {
+            // @TODO : log that
+            Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             // @TODO : log that
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);            
-        }finally{
-            try {
-                br.close();
-            } catch (IOException ex) {
-                //Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
-        key = line.trim();
-        return key;
+            Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+                        
+        return SkeyLocal;
     }
     
     /**
@@ -186,7 +168,7 @@ public class Crypt {
             return new sun.misc.BASE64Encoder().encode(enc);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException ex) {
             //@TODO : log that
-            //Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
