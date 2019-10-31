@@ -39,6 +39,8 @@ public class CryptTest {
         String clearPhrase = "nianiania_truc_tatatoto";
         String encryptPhrase = op.encrypt(clearPhrase);
         String decryptPhrase = op.decrypt(encryptPhrase);        
+        
+        Assert.assertEquals("Key is not the same after reopen", clearPhrase, decryptPhrase);        
     }
         
 }
