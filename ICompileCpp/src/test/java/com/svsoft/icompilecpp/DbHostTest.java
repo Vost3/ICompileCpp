@@ -26,13 +26,13 @@ import org.junit.runners.MethodSorters;
  * @author Steve Vogel
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ConfDbTest {
-    protected ConfDb op = null;
+public class DbHostTest {
+    protected DbHost op = null;
     private String path = null;
  
     @Before
     public void setUp(){
-        op = new ConfDb();
+        op = new DbHost();
         path = op.getPath();  
     }
     
@@ -80,7 +80,7 @@ public class ConfDbTest {
                 Assert.fail("Table 'host' missing in database file");
                 return;
             }
-            Logger.getLogger(ConfDbTest.class.getName()).log(Level.SEVERE, null, e);            
+            Logger.getLogger(DbHostTest.class.getName()).log(Level.SEVERE, null, e);            
         }
     }
     
@@ -119,7 +119,7 @@ public class ConfDbTest {
             stmt.close();
             conn.close();
         } catch (SQLException e) {                
-            Logger.getLogger(ConfDbTest.class.getName()).log(Level.SEVERE, null, e);   
+            Logger.getLogger(DbHostTest.class.getName()).log(Level.SEVERE, null, e);   
             return -1;
         }
         return nb;
@@ -142,7 +142,7 @@ public class ConfDbTest {
             stmt.close();
             conn.close();
         } catch (SQLException ex) {                        
-            Logger.getLogger(ConfDb.class.getName()).log(Level.SEVERE, null, ex);            
+            Logger.getLogger(DbHost.class.getName()).log(Level.SEVERE, null, ex);            
         }
         
         int nbRow = getNbRow();

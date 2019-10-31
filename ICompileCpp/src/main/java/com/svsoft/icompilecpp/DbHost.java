@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * @author Steve Vogel  
  */
-public class ConfDb {
+public class DbHost {
     
     private Connection conn = null;
     /**
@@ -31,7 +31,7 @@ public class ConfDb {
         this.path = path;
     }
         
-    ConfDb()
+    DbHost()
     {
         path = System.getProperty("user.home")+File.separator;
         path += ".svsoft";
@@ -117,7 +117,7 @@ public class ConfDb {
             stmt.close();
             close();
         } catch (SQLException ex) {                        
-            Logger.getLogger(ConfDb.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DbHost.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
         }
         return result;
@@ -142,7 +142,7 @@ public class ConfDb {
             pstmt.close();
             close();
         } catch (SQLException ex) {                        
-            Logger.getLogger(ConfDb.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DbHost.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
