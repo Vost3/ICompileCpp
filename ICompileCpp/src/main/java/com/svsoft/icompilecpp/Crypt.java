@@ -12,6 +12,9 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.Cipher;
@@ -22,55 +25,88 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @author Steve Vogel
  */
-public class Crypt {           
+public class Crypt {                  
     
+    private String lexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!:;,?*ù%^$_-|@";
     private File f = null;
+    
+    /**
+     * key string generated or read on file
+     */
+    private String key = null;
+    
     /**
      * Key for encrypt and decrypt
      */
-    private SecretKey key = null;
+    private SecretKey Skey = null;
     
     /**
      * Path of file where saved key
      */
     private String path = null;        
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-    
     Crypt(){
         path = System.getProperty("user.home")+File.separator;
         path += ".svsoft";
         path += File.separator+"icmpcppk.cfg";  
         
         openFile(path);
-        key = new SecretKeySpec("RANDOM_KEY".getBytes(), "AES");                        
+        Skey = new SecretKeySpec(getKey().getBytes(), "AES");                        
+    }
+    
+    public String getPath() {
+        return path;
     }
 
+    public void setPath(String path) {
+        this.path = path;
+    }        
     
     private boolean openFile(String path){                
         // Create directory if not exist
         f = new File(path);
         if( f.exists() == false ){
-            f.mkdirs();        
+            f.getParentFile().mkdirs(); 
+            
             try {
-                f.createNewFile();
+                f.createNewFile();                
+                key = getRandomKey(512);
+                writeKey(key);
             } catch (IOException ex) {
                 //@TODO : log that
                 Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
             }
-        }
-            
+        }            
         return true;        
     }
     
-    private void setKey(String data) {
+    /**
+     * Generate random key
+     * @param length
+     * @return 
+     */
+    public String getRandomKey(int length) 
+    {
+        Set<String> identifiers = new HashSet<String>();
+        Random rand = new Random();    
+        StringBuilder builder = new StringBuilder();
+        while(builder.toString().length() == 0) {            
+            for(int i = 0; i < length; i++) {
+                builder.append(lexicon.charAt(rand.nextInt(lexicon.length())));
+            }
+            if(identifiers.contains(builder.toString())) {
+                builder = new StringBuilder();
+            }
+        }
+        return builder.toString();
+    }
+    
+    /**
+     * Write key in file
+     * @param data 
+     */
+    private void writeKey(String data) {
         OutputStream outStream = null;
         try {
             outStream = new FileOutputStream(f);
@@ -89,9 +125,15 @@ public class Crypt {
     
     /**
      * get key from file
-     * @return 
+     * @return key
      */
-    private String getKey(){
+    public String getKey(){
+        
+        // Key already read
+        if( key != null )
+            return key;
+        
+        // Go to read from file
         String line = null;
         BufferedReader br = null;
         try {
@@ -108,13 +150,20 @@ public class Crypt {
             return null;
         }
         
-        return line;
+        key = line.trim();
+        return key;
     }
     
+    /**
+     * Encrypt string following key
+     * @param str
+     * @return
+     * @throws Exception 
+     */
     public String encrypt(String str) throws Exception {
         Cipher ecipher = null;
         ecipher = Cipher.getInstance("AES");
-        ecipher.init(Cipher.ENCRYPT_MODE, key);
+        ecipher.init(Cipher.ENCRYPT_MODE, Skey);
         // Encode the string into bytes using utf-8
         byte[] utf8 = str.getBytes("UTF8");
 
@@ -125,10 +174,16 @@ public class Crypt {
         return new sun.misc.BASE64Encoder().encode(enc);
     }
 
+    /** 
+     * Decrypt string following key
+     * @param str
+     * @return
+     * @throws Exception 
+     */
     public String decrypt(String str) throws Exception {
         Cipher dcipher = null;
         dcipher = Cipher.getInstance("AES");              
-        dcipher.init(Cipher.DECRYPT_MODE, key);
+        dcipher.init(Cipher.DECRYPT_MODE, Skey);
         
         // Decode base64 to get bytes
         byte[] dec = new sun.misc.BASE64Decoder().decodeBuffer(str);
