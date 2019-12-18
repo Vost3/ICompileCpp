@@ -54,7 +54,8 @@ public class Crypt {
     Crypt(){
         path = System.getProperty("user.home")+File.separator;
         path += ".svsoft";
-        path += File.separator+"icmpcppk.cfg";  
+        path += File.separator + "icompilecpp";
+        path += File.separator+"key.cfg";  
         
         openFile(path);   
         Skey = getKey();
