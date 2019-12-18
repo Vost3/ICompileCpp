@@ -31,7 +31,7 @@ public class DbHostTest {
     private String path = null;
  
     @Before
-    public void setUp(){
+    public void setUp(){        
         op = new DbHost();
         path = op.getPath();  
     }
@@ -82,6 +82,7 @@ public class DbHostTest {
             }
             Logger.getLogger(DbHostTest.class.getName()).log(Level.SEVERE, null, e);            
         }
+        deleteDb();
     }
     
     public void deleteDb()
@@ -96,9 +97,12 @@ public class DbHostTest {
      * Set an host in table
      */
     @Test
-    public void setHostTest(){           
+    public void setHostTest(){    
+        deleteDb();
+        op.initDb();
         op.setHost("ip_here", "login_here", "password_here");
         Assert.assertEquals(1, getNbRow());   // should return 0 row in 
+        deleteDb();
     }
     
     
@@ -149,6 +153,8 @@ public class DbHostTest {
         
         op.clean(30);
         Assert.assertEquals(nbRow-1, getNbRow());   // should return 0 row in 
+        
+        deleteDb();
     }
     
     

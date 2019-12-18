@@ -40,6 +40,8 @@ public class CryptTest {
         String decryptPhrase = op.decrypt(encryptPhrase);        
         
         Assert.assertEquals("Error during decrypt", clearPhrase, decryptPhrase);        
+        
+        f.delete();
     }
         
 }
