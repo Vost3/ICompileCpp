@@ -18,63 +18,70 @@ import org.json.JSONObject;
  */
 public class Host {
     
-    private Crypt crp = null; 
+    private Crypt crypt = null; 
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isTestMode() {
+        return testMode;
+    }
+
+    public void setTestMode(boolean testMode) {
+        this.testMode = testMode;
+    }
     
-    private String path = null;
+    private String path = "";
     
-    private File jsonF = null;
+    private String dirPath = "";
     
-    private JSONObject json = null;
+    private File f = null;   
     
+    /**
+     * ip of IBMi
+     * this is the name of json file too
+     */
     private String ip = null;
+       
     private String login = null;
+    
     private String password = null;    
                 
+    private boolean testMode = false;
     
     public Host(String ip){
-        crp = new Crypt();
-        
-        boolean created = false;
-        path = System.getProperty("user.home")+File.separator;
-        path += ".svsoft";
-        path += File.separator + "icompilecpp";
+        crypt = new Crypt();
+                
+        dirPath = System.getProperty("user.home")+File.separator;
+        dirPath += ".svsoft";
+        dirPath += File.separator + "icompilecpp";
         
         // Create directory if not exist
-        File dir = new File(path);
+        File dir = new File(dirPath);
         if( dir.exists() == false )
-            dir.mkdir();        
-            created = true;
+            dir.mkdir();                    
         
         this.ip = ip;
-        path += File.separator+this.ip+".json";
+        path += dirPath + File.separator + this.ip + ".json";
         
-        jsonF = new File(path);     
+        f = new File(path);     
         
         openFile();
     }
     
-    /**
-     * read data in json file and set property of current object
-     */
-    private void readData(){                        
-        
-        String content = null;
-        try {
-            content = FileUtils.readFileToString(jsonF, "utf-8");
-        } catch (IOException ex) {
-            // @TODO: log that
-            //Logger.getLogger(Host.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        // File content is empty
-        if( content.trim().length() == 0 )
-            return;
-        
-        // Convert JSON string to JSONObject
-        json = new JSONObject(content); 
-        login = crp.decrypt(json.getString("login"));
-        password = crp.decrypt(json.getString("password"));
-    }
     
     /**
      * Open and init if not exist
@@ -82,9 +89,9 @@ public class Host {
     private void openFile(){
         boolean created = false;
                 
-        if( jsonF.exists() == false ){
+        if( f.exists() == false ){
             try {
-                jsonF.createNewFile();                
+                f.createNewFile();                
                 created = true;
             } catch (IOException ex) {
                 // @TODO: log that
@@ -96,6 +103,36 @@ public class Host {
     }
     
     /**
+     * read data in json file and set property of current object
+     */
+    private void readData(){                        
+        
+        String content = null;
+        try {
+            content = FileUtils.readFileToString(f, "utf-8");
+        } catch (IOException ex) {
+            // @TODO: log that
+            //Logger.getLogger(Host.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        // File content is empty
+        if( content.trim().length() == 0 )
+            return;
+                
+        // Convert JSON string to JSONObject
+        JSONObject json = new JSONObject(content); 
+        long timestamp = json.getLong("timestamp");
+        if( timestamp < (timestamp-(60*60*24)) ){            
+            return;
+        }
+        login = json.getString(crypt.decrypt("login"));
+        login = crypt.decrypt(login);
+        
+        password = crypt.decrypt(json.getString("password"));
+        password = crypt.decrypt(password);
+    }
+        
+    /**
      * save json content
      * 
      * @param login
@@ -104,18 +141,35 @@ public class Host {
     public void saveData(String login, String password){
         long currentTimestamp = System.currentTimeMillis();        
         
+        // For test mode
+        // set current timestamp to 24h before
+        if( testMode )
+            currentTimestamp  = currentTimestamp - ( 60*60*24 );
+        
         // Create Json Object
         JSONObject json = new JSONObject(); 
-        json.put("login", crp.encrypt(login));
-        json.put("password", crp.encrypt(password));
+        json.put(crypt.encrypt("login"), crypt.encrypt(login));
+        json.put(crypt.encrypt("password"), crypt.encrypt(password));
         json.put("timestamp", currentTimestamp);
         
         String content = json.toString();
         try {
-            FileUtils.writeStringToFile(jsonF, content, "utf-8");
+            FileUtils.writeStringToFile(f, content, "utf-8");
         } catch (IOException ex) {
             // @TODO: log that
             // Logger.getLogger(Host.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * clear all conf file saved
+     */
+    public void clearAll(){
+        File[] cList = new File(dirPath).listFiles();
+        for (File c : cList) {
+            if( c.getName().contains(".json") ){
+                c.delete();
+            }
         }
     }
     

@@ -21,21 +21,20 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HostTest {
     
-    public String path = System.getProperty("user.home") + File.separator + ".svsoft" + File.separator + "icompilecpp";
+    public String dirPath = System.getProperty("user.home") + File.separator + ".svsoft" + File.separator + "icompilecpp";
     private String fakeIp = "192.168.0.0";
     private String fakeLogin = "steve";
     private String fakePassword = "password";
+    private Crypt crypt = new Crypt();
     
     /**
      * Test creation of json file
      */
     @Test
-    public void createFile(){     
-       
-        Crypt cpr = new Crypt();
+    public void createFile(){                    
         
         Host h = new Host(fakeIp);
-        File f = new File(path + File.separator + fakeIp + ".json");
+        File f = new File(dirPath + File.separator + fakeIp + ".json");
         
         // is created
         Assert.assertTrue(f.exists());
@@ -43,15 +42,15 @@ public class HostTest {
         f.delete();
     }
     
-    
+    /**
+     * create fake content encrypted
+     */
     @Test
-    public void createFakeContent(){     
-
-        Crypt cpr = new Crypt();
+    public void createFakeContent(){            
         
         Host h = new Host(fakeIp);
         h.saveData(fakeLogin, fakePassword);
-        File f = new File(path + File.separator + fakeIp + ".json");                
+        File f = new File(dirPath + File.separator + fakeIp + ".json");                
         
         String content = null;
         try {
@@ -61,17 +60,77 @@ public class HostTest {
             //Logger.getLogger(Host.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        // Check login from file
+        // Check login from file        
         JSONObject json = new JSONObject(content);
-        String loginFromFile = json.getString("login");
-        loginFromFile = cpr.decrypt(loginFromFile);
+        String loginFromFile = json.getString(crypt.encrypt("login"));
+        loginFromFile = crypt.decrypt(loginFromFile);
         Assert.assertEquals(fakeLogin, loginFromFile);
         
         // Check password from file
-        String passwordFromFile = json.getString("password");
-        passwordFromFile = cpr.decrypt(passwordFromFile);
+        String passwordFromFile = json.getString(crypt.encrypt("password"));
+        passwordFromFile = crypt.decrypt(passwordFromFile);
         Assert.assertEquals(fakePassword, passwordFromFile);
         
-        //f.delete();
+        f.delete();
     }
+    
+    @Test
+    public void rewriteOnIt(){     
+       
+        
+        Host h = new Host(fakeIp);
+        h.saveData(fakeLogin, fakePassword);
+        File f = new File(dirPath + File.separator + fakeIp + ".json");                
+        
+        String content_1 = null;
+        try {
+            content_1 = FileUtils.readFileToString(f, "utf-8");
+        } catch (IOException ex) {
+            // @TODO: log that
+            //Logger.getLogger(Host.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        // change content
+        h.saveData("other_fake_login", "other_fake_password");
+        
+        String content_2 = null;
+        try {
+            content_2 = FileUtils.readFileToString(f, "utf-8");
+        } catch (IOException ex) {
+            // @TODO: log that
+            //Logger.getLogger(Host.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        Assert.assertNotEquals(content_1, content_2);
+        
+        f.delete();
+        }
+    
+        @Test
+        public void clearAllFiles(){     
+            Host h = new Host("192.168.1.1");
+            h = new Host("192.168.1.2");
+            h = new Host("192.168.1.3");
+            h = new Host("192.168.1.4");                        
+            
+            File[] cList = new File(dirPath).listFiles();
+            int nb = 0;
+            for (File c : cList) {
+                if( c.getName().contains(".json") ){
+                    nb++;
+                }
+            }
+            
+            Assert.assertEquals(4, nb);
+            h.clearAll();
+            
+            cList = new File(dirPath).listFiles();
+            nb = 0;
+            for (File c : cList) {
+                if( c.getName().contains(".json") ){
+                    nb++;
+                }
+            }
+            Assert.assertEquals(0, nb);
+        }                    
 }
