@@ -122,7 +122,8 @@ public class Host {
         // Convert JSON string to JSONObject
         JSONObject json = new JSONObject(content); 
         long timestamp = json.getLong("timestamp");
-        if( timestamp < (timestamp-(60*60*24)) ){            
+        long currentTimestamp = System.currentTimeMillis(); 
+        if( timestamp < (currentTimestamp-(60*60*24)) ){            
             return;
         }
         login = json.getString(crypt.decrypt("login"));
@@ -144,7 +145,7 @@ public class Host {
         // For test mode
         // set current timestamp to 24h before
         if( testMode )
-            currentTimestamp  = currentTimestamp - ( 60*60*24 );
+            currentTimestamp  -= ( 60*60*24 );
         
         // Create Json Object
         JSONObject json = new JSONObject(); 

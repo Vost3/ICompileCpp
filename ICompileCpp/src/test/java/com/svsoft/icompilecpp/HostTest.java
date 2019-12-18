@@ -132,5 +132,16 @@ public class HostTest {
                 }
             }
             Assert.assertEquals(0, nb);
-        }                    
+        }       
+        
+        @Test
+        public void testAgeOfFile(){   
+            Host h = new Host("192.168.1.1");
+            h.setTestMode(true);
+            h.saveData(fakeLogin, fakePassword);            
+            
+            Host h2 = new Host("192.168.1.1");        
+            Assert.assertEquals(h2.getLogin(), null);
+            Assert.assertEquals(h2.getPassword(), null);
+        }
 }
