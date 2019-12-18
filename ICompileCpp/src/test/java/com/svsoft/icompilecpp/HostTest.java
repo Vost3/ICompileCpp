@@ -62,12 +62,12 @@ public class HostTest {
         
         // Check login from file        
         JSONObject json = new JSONObject(content);
-        String loginFromFile = json.getString(crypt.encrypt("login"));
+        String loginFromFile = json.getString("login");
         loginFromFile = crypt.decrypt(loginFromFile);
         Assert.assertEquals(fakeLogin, loginFromFile);
         
         // Check password from file
-        String passwordFromFile = json.getString(crypt.encrypt("password"));
+        String passwordFromFile = json.getString("password");
         passwordFromFile = crypt.decrypt(passwordFromFile);
         Assert.assertEquals(fakePassword, passwordFromFile);
         
@@ -121,7 +121,7 @@ public class HostTest {
                 }
             }
             
-            Assert.assertEquals(4, nb);
+            Assert.assertTrue((nb > 4));
             h.clearAll();
             
             cList = new File(dirPath).listFiles();
