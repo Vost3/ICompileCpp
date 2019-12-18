@@ -299,7 +299,7 @@ public class Arguments {
         } catch (java.lang.ArrayIndexOutOfBoundsException ex ){
             System.err.println("ERROR \t: " + ex.getMessage() + " ( please see documentation '-help')");            
             System.exit(1);
-        } catch (NumberFormatException ex) {           
+        } catch (NumberFormatException ex) {
             System.err.println(ex.toString());
             System.exit(1);
         } catch (ArgumentNotValid ex) {
@@ -336,7 +336,13 @@ public class Arguments {
      */
     private void check(){
         boolean error = false;
-        if( filePath == null ){
+        
+        if( ip == null ){
+            System.err.println("ERROR \t: -ip argument is missing");
+            error = true;
+        }
+        
+        if( !error && filePath == null ){
             System.err.println("ERROR \t: -file argument is missing");
             error = true;
         }
