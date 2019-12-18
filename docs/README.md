@@ -5,6 +5,8 @@ Work in progress. So be indulgent ^^ <br />
 Don't hesitate to open ticket for any issues or demand of features <br />
 Feel free to contribute*
 
+See the evolution through the [Todo's List here](#Todo's)
+
 ### Requirement
 * Java 8
 * IBMI i V6R1 till V7R4
@@ -84,15 +86,16 @@ Soon an exemple of program and module
 * [NetBeans](https://netbeans.org/) - A simple IDE
 * [Maven](https://maven.apache.org/) - Dependency Management
 
-## Coming soon
-- [X] Requirements ;) *( 10/30/2019 )*
-- [X] Ask password in hidden *( 10/30/2019 )*
+## Todo's
+- [X] *( 10/30/2019 )* - Requirements
+- [X] *( 10/30/2019 )* - Ask password in hidden 
 - [ ] Compile current directory recursively
-- [ ] Save password during 24 hours
-- [ ] Encrypt password saved
+- [X] *( 12/18/2019 )* - Save password for current user during 24 hours 
+- [X] *( 12/18/2019 )* - Encrypt password saved 
 - [ ] Exemples of program
 - [ ] Exemples of module
 - [ ] Tests on linux
-- [ ] Unit tests
+- [X] *( 12/18/2019 )* - Tests for Encryption password 
+- [X] *( 12/18/2019 )* - Tests for Persistance of data 
 - [ ] Compile SRVPGM
 
