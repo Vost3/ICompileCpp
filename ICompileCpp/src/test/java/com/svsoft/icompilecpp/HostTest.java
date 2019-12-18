@@ -134,6 +134,10 @@ public class HostTest {
             Assert.assertEquals(0, nb);
         }       
         
+        /**
+         * test age of data saved.
+         * cannot be older than 24h
+         */
         @Test
         public void testAgeOfFile(){   
             Host h = new Host("192.168.1.1");
@@ -141,7 +145,7 @@ public class HostTest {
             h.saveData(fakeLogin, fakePassword);            
             
             Host h2 = new Host("192.168.1.1");        
-            Assert.assertEquals(h2.getLogin(), null);
+            Assert.assertEquals(h2.getUser(), null);
             Assert.assertEquals(h2.getPassword(), null);
         }
 }

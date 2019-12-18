@@ -20,12 +20,12 @@ public class Host {
     
     private Crypt crypt = null; 
 
-    public String getLogin() {
-        return login;
+    public String getUser() {
+        return user;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getPassword() {
@@ -56,7 +56,7 @@ public class Host {
      */
     private String ip = null;
        
-    private String login = null;
+    private String user = null;
     
     private String password = null;    
                 
@@ -126,8 +126,8 @@ public class Host {
         if( timestamp < (currentTimestamp-(60*60*24)) ){            
             return;
         }
-        login = json.getString(crypt.decrypt("login"));
-        login = crypt.decrypt(login);
+        user = json.getString(crypt.decrypt("login"));
+        user = crypt.decrypt(user);
         
         password = crypt.decrypt(json.getString("password"));
         password = crypt.decrypt(password);
