@@ -126,20 +126,21 @@ public class Host {
         if( timestamp < (currentTimestamp-(60*60*24)) ){            
             return;
         }
-        user = json.getString(crypt.decrypt("login"));
+                
+        user = json.getString("login");
         user = crypt.decrypt(user);
         
-        password = crypt.decrypt(json.getString("password"));
+        password = json.getString("password");
         password = crypt.decrypt(password);
     }
         
     /**
      * save json content
      * 
-     * @param login
+     * @param user
      * @param password 
      */
-    public void saveData(String login, String password){
+    public void saveData(String user, String password){
         long currentTimestamp = System.currentTimeMillis();        
         
         // For test mode
@@ -149,13 +150,12 @@ public class Host {
         
         // Create Json Object
         JSONObject json = new JSONObject(); 
-        json.put(crypt.encrypt("login"), crypt.encrypt(login));
-        json.put(crypt.encrypt("password"), crypt.encrypt(password));
+        json.put("login", crypt.encrypt(user));
+        json.put("password", crypt.encrypt(password));
         json.put("timestamp", currentTimestamp);
-        
-        String content = json.toString();
+                
         try {
-            FileUtils.writeStringToFile(f, content, "utf-8");
+            FileUtils.writeStringToFile(f, json.toString(), "utf-8");
         } catch (IOException ex) {
             // @TODO: log that
             // Logger.getLogger(Host.class.getName()).log(Level.SEVERE, null, ex);

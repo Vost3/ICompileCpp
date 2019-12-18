@@ -369,22 +369,36 @@ public class Arguments {
         }
         
         // password defined in command
-        if( !error && password == null ){
+        if( !error && password == null ){            
             String pwd = null;
-            Console console = System.console();
-            // no console attribute to current JVM
-            if( console == null ){
-                if( scanner == null )
-                    scanner = new Scanner(System.in);
-                
-                System.out.println("Please enter your password: ");
-                pwd = scanner.next();
-            }else{
-                pwd = new String(console.readPassword("Please enter your password: "));    
+            boolean persisted = false;
+            
+            // Check already loggued during last 24 hours
+            pwd = getDatasPersisted();
+            if( pwd != null )
+                persisted = true;
+            
+            // password never persisted
+            if( pwd == null ){            
+                Console console = System.console();
+                // no console attribute to current JVM
+                if( console == null ){
+                    if( scanner == null )
+                        scanner = new Scanner(System.in);
+
+                    System.out.println("Please enter your password: ");
+                    pwd = scanner.next();
+                }else{
+                    pwd = new String(console.readPassword("Please enter your password: "));    
+                }
             }
             
-            if( pwd != null  || pwd.length() == 0 ){
+            if( pwd != null  || pwd.length() > 0 ){
                 password = pwd;
+                if( !persisted ){
+                    persistDatas();
+                }
+                    
             }else{
                 error = true;
             }
@@ -397,9 +411,12 @@ public class Arguments {
         
     }
     
+    /**
+     * show help in console
+     */
     private void getHelp(){
         System.out.println("------------------------------");
-        System.out.println("-- Help ibmI compile CPP    --");
+        System.out.println("-- Help IBMi compile CPP    --");
         System.out.println("------------------------------");
         
         System.out.println("-ip                     : ip or dns         [ Required ]");
@@ -410,8 +427,34 @@ public class Arguments {
         System.out.println("-l | -lib | -library    : library of compilation");        
         System.out.println("-dbgview                : set debug view(*all)");        
         System.out.println("-tgtrls                 : set target release");        
-        System.out.println("-v                      : see all commande send on iseries");        
+        System.out.println("-v                      : see all commande send on iseries");
         
+    }
+    
+    /**
+     * get password if loggued during last 24 hours
+     * @return 
+     */
+    private String getDatasPersisted(){
+        String password = null;
         
+        Host h = new Host(ip);
+        String userSaved = h.getUser();
+        
+        // data saved not concerne the current user
+        if( userSaved == null || userSaved.equals(user) == false )
+            return null;
+        
+        password = h.getPassword();
+        
+        return password;
+    }
+    
+    /**
+     * persist data in json for this host
+     */
+    private void persistDatas(){
+        Host h = new Host(ip);
+        h.saveData(user, password);
     }
 }

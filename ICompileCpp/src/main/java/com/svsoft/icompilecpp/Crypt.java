@@ -195,10 +195,10 @@ public class Crypt {
             return new String(utf8, "UTF8");
         } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException ex) {
             //@TODO : log that
-            //Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalBlockSizeException | BadPaddingException | IOException ex) {
             //@TODO : log that
-            //Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Crypt.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
