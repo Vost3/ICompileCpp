@@ -121,7 +121,7 @@ public class HostTest {
                 }
             }
             
-            Assert.assertTrue((nb > 4));
+            Assert.assertTrue((nb >= 4));
             h.clearAll();
             
             cList = new File(dirPath).listFiles();
