@@ -87,15 +87,16 @@ Soon an exemple of program and module
 * [Maven](https://maven.apache.org/) - Dependency Management
 
 ## Todo's
-- [X] *( 10/30/2019 )* - Requirements
-- [X] *( 10/30/2019 )* - Ask password in hidden 
-- [ ] Compile current directory recursively
-- [X] *( 12/18/2019 )* - Save password for current user during 24 hours 
-- [X] *( 12/18/2019 )* - Encrypt password saved 
-- [ ] Exemples of program
-- [ ] Exemples of module
-- [ ] Tests on linux
-- [X] *( 12/18/2019 )* - Tests for Encryption password 
-- [X] *( 12/18/2019 )* - Tests for Persistance of data 
-- [ ] Compile SRVPGM
+- [X] 10/30/2019 - *Requirements*
+- [X] 10/30/2019 - *Ask password in hidden*
+- [ ] *Compile current directory recursively*
+- [X] 12/18/2019 - *Save password for current user during 24 hours*
+- [X] 12/18/2019 - *Encrypt password saved*
+- [ ] *Exemples of program*
+- [ ] *Exemples of module*
+- [ ] *Tests on linux*
+- [X] 12/18/2019 - *Tests for Encryption password*
+- [X] 12/18/2019 - *Tests for Persistance of data*
+- [ ] *Compile SRVPGM*
+- [ ] *Clear config cache*
 
