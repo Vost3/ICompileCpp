@@ -54,6 +54,11 @@ public class Arguments {
      * verbose mode ( show debug during compile )
      */
     private boolean verbose = false;
+    
+    /**
+     * clean conf files 
+     */
+    private boolean clean = false;
 
 
     /**
@@ -200,6 +205,11 @@ public class Arguments {
     public boolean verboseMode() {
         return verbose;
     }
+    
+    public boolean isClean() {
+        return clean;
+    }
+    
     /*
     * @params : args send to te program
     * result : boolean if all parms mandatory recevied
@@ -282,6 +292,10 @@ public class Arguments {
                     if( currentArgs.equals("-h") || currentArgs.equals("-help") ){
                     getHelp();
                     System.exit(0);
+                }else
+                    // Clean conf cache
+                    if( currentArgs.equals("-clean") ){                    
+                        clean = true;
                 }
                 
                 // Bound security
@@ -350,6 +364,11 @@ public class Arguments {
         if( !error && remoteWorkspace == null ){
             System.err.println("ERROR \t: -rmtd argument is missing");
             error = true;
+        }
+        
+        if( isClean() ){
+            Host h = new Host(ip);
+            h.clearAll();
         }
         
         // user defined in command
@@ -428,6 +447,7 @@ public class Arguments {
         System.out.println("-dbgview                : set debug view(*all)");        
         System.out.println("-tgtrls                 : set target release");        
         System.out.println("-v                      : see all commande send on iseries");
+        System.out.println("-clean                  : clean all conf cache files");
         
     }
     

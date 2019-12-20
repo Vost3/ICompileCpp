@@ -62,17 +62,12 @@ public class Host {
                 
     private boolean testMode = false;
     
-    public Host(String ip){
-        crypt = new Crypt();
-                
-        dirPath = System.getProperty("user.home")+File.separator;
-        dirPath += ".svsoft";
-        dirPath += File.separator + "icompilecpp";
-        
-        // Create directory if not exist
-        File dir = new File(dirPath);
-        if( dir.exists() == false )
-            dir.mkdir();                    
+    public Host(){
+        init();         
+    }
+    
+    public Host(String ip){                         
+        init();
         
         this.ip = ip;
         path += dirPath + File.separator + this.ip + ".json";
@@ -82,6 +77,21 @@ public class Host {
         openFile();
     }
     
+    /**
+     * init all vars needed
+     */
+    private void init(){
+        crypt = new Crypt();
+                
+        dirPath = System.getProperty("user.home")+File.separator;
+        dirPath += ".svsoft";
+        dirPath += File.separator + "icompilecpp";
+        
+        // Create directory if not exist
+        File dir = new File(dirPath);
+        if( dir.exists() == false )
+            dir.mkdir();                   
+    }
     
     /**
      * Open and init if not exist
