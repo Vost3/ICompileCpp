@@ -93,8 +93,8 @@ Soon an exemple of program and module
 - [ ] *Compile current directory recursively*
 - [X] 12/18/2019 - *Save password for current user during 24 hours*
 - [X] 12/18/2019 - *Encrypt password saved*
-- [ ] *Exemples of program*
-- [ ] *Exemples of module*
+- [X] 12/20/2019 - *Exemples of program*
+- [X] 12/20/2019 - *Exemples of module*
 - [ ] *Tests on linux*
 - [X] 12/18/2019 - *Tests for Encryption password*
 - [X] 12/18/2019 - *Tests for Persistance of data*
