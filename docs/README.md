@@ -32,6 +32,7 @@ If you see the help you're the best ;)<br />
 | `-dbgview`   | str       | no       | compile with DBGVIEW(*ALL) ( *NONE by default ) | *NONE / *ALL / *STMT / *SOURCE / *LIST
 | `-tgtrls`   | str       | no       | target release ( *PRV by default ) |  *CURRENT / *PRV / VXRXMX ( following the release of your system ) |
 | `-v`   | flag       | no       | put the program in debug mode. see command send, ect ...  |
+| `-clean`   | flag       | no       | clean conf cache files  |
 
 
 ### Usage with Visual Studio Code
@@ -98,5 +99,5 @@ Soon an exemple of program and module
 - [X] 12/18/2019 - *Tests for Encryption password*
 - [X] 12/18/2019 - *Tests for Persistance of data*
 - [ ] *Compile SRVPGM*
-- [ ] *Clear config cache*
+- [X] 12/20/2019 - *Clear config cache*
 
