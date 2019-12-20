@@ -158,7 +158,7 @@ public class Main {
     boolean compileModule() 
     {        
         if( name == null ){
-            System.out.print(Date.nowFormatted2() + " : ERROR\t: name of module not defined ( see documentation by '-help' )");
+            System.out.println(Date.nowFormatted2() + " : ERROR\t: name of module not defined ( see documentation by '-help' )");
             return false;
         }                           
         
